@@ -8,27 +8,149 @@ import {
   BookOpen, Award, Globe, Users, TrendingUp, Briefcase, Sparkles,
   CheckCircle2
 } from 'lucide-react';
+import { createRazorpayOrder, verifyRazorpayPayment, type RegistrationData } from '@/lib/api';
+
+// Declare Razorpay for TypeScript
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
-  const [formData, setFormData] = useState({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
     phone: '',
     grade: '',
-    interests: [] as string[],
+    interests: [],
     experience: '',
     message: ''
   });
 
-  const handleSubmit = (e: FormEvent) => {
+  // Load Razorpay script
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setShowConfetti(true);
-    
-    setTimeout(() => {
-      alert('Registration Successful!\n\nWelcome to the AI Workshop!\nCheck your email for workshop details and access information.');
-      setShowConfetti(false);
-    }, 1000);
+    setIsSubmitting(true);
+
+    try {
+      // Load Razorpay script
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) {
+        alert('Failed to load payment gateway. Please check your internet connection.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Create Razorpay order
+      const orderResponse = await createRazorpayOrder({
+        amount: 9900, // ₹99 in paise
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`,
+        notes: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        }
+      });
+
+      if (!orderResponse.success || !orderResponse.data) {
+        alert('Failed to create order. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      const order = orderResponse.data;
+
+      // Razorpay payment options
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'DexLabs AI Workshop',
+        description: 'AI & Machine Learning Workshop Registration - June 14, 2026',
+        image: '/DexLabs.PNG',
+        order_id: order.id,
+        handler: async function (response: any) {
+          try {
+            // Verify payment and save registration
+            const verifyResponse = await verifyRazorpayPayment({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              registrationData: formData
+            });
+
+            if (verifyResponse.success) {
+              setShowConfetti(true);
+              
+              setTimeout(() => {
+                alert('🎉 Registration & Payment Successful!\n\nPayment ID: ' + response.razorpay_payment_id + '\n\nWelcome to the AI Workshop!\nCheck your email for workshop details and Zoom link.');
+                setShowConfetti(false);
+                
+                // Reset form
+                setFormData({
+                  name: '',
+                  email: '',
+                  phone: '',
+                  grade: '',
+                  interests: [],
+                  experience: '',
+                  message: ''
+                });
+              }, 1000);
+            } else {
+              alert('Payment successful but registration failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
+            }
+          } catch (error) {
+            console.error('Verification error:', error);
+            alert('Payment successful but verification failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: formData.email,
+          contact: formData.phone
+        },
+        notes: {
+          grade: formData.grade,
+          experience: formData.experience,
+          interests: formData.interests.join(', ')
+        },
+        theme: {
+          color: '#8b5cf6' // Violet color matching your brand
+        },
+        modal: {
+          ondismiss: function() {
+            setIsSubmitting(false);
+            alert('Payment cancelled. Please complete the payment to register for the workshop.');
+          }
+        }
+      };
+
+      // Open Razorpay payment modal
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to initiate payment. Please try again or contact support.');
+      setIsSubmitting(false);
+    }
   };
 
   const handleInterestChange = (interest: string) => {
@@ -287,9 +409,10 @@ export default function Home() {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg"
+              disabled={isSubmitting}
+              className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Register Now
+              {isSubmitting ? 'Processing Payment...' : 'Pay ₹99 & Register Now'}
             </button>
           </form>
         </div>
