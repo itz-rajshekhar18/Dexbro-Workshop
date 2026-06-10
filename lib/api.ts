@@ -1,5 +1,6 @@
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+const PAYMENT_API_URL = process.env.NEXT_PUBLIC_PAYMENT_API_URL || `${API_BASE_URL}/payment`;
 
 // Registration data type
 export interface RegistrationData {
@@ -157,7 +158,7 @@ export interface PaymentVerificationData {
 // Create Razorpay order
 export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise<ApiResponse<RazorpayOrderResponse>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/payment/create-order`, {
+    const response = await fetch(`${PAYMENT_API_URL}/create-order`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -180,7 +181,7 @@ export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise
 // Verify Razorpay payment
 export async function verifyRazorpayPayment(paymentData: PaymentVerificationData): Promise<ApiResponse<Registration>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/payment/verify`, {
+    const response = await fetch(`${PAYMENT_API_URL}/verify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
