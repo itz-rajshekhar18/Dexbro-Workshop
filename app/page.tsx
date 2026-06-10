@@ -46,14 +46,19 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
+      console.log('Starting payment flow...');
+      
       // Load Razorpay script
       const scriptLoaded = await loadRazorpayScript();
+      console.log('Razorpay script loaded:', scriptLoaded);
+      
       if (!scriptLoaded) {
         alert('Failed to load payment gateway. Please check your internet connection.');
         setIsSubmitting(false);
         return;
       }
 
+      console.log('Creating order with backend...');
       // Create Razorpay order
       const orderResponse = await createRazorpayOrder({
         amount: 75000, // ₹750 in paise (750 * 100)
@@ -66,8 +71,11 @@ export default function Home() {
         }
       });
 
+      console.log('Order response:', orderResponse);
+
       if (!orderResponse.success || !orderResponse.data) {
-        alert('Failed to create order. Please try again.');
+        alert('Failed to create order. Please try again. Check console for details.');
+        console.error('Order creation failed:', orderResponse);
         setIsSubmitting(false);
         return;
       }
