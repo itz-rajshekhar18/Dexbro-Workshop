@@ -73,7 +73,7 @@ export default function Home() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header with Logo */}
-        <div className="text-center mb-12 mt-64 md:mt-72">
+        <div className="text-center mb-12 mt-57 md:mt-40">
           <div className="flex justify-center mb-6">
             <div className="relative p-8 rounded-3xl">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 to-blue-600/30 blur-3xl rounded-full"></div>
