@@ -56,7 +56,7 @@ export default function Home() {
 
       // Create Razorpay order
       const orderResponse = await createRazorpayOrder({
-        amount: 9900, // ₹99 in paise
+        amount: 75000, // ₹750 in paise (750 * 100)
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
         notes: {
@@ -251,7 +251,7 @@ export default function Home() {
 
           <div className="text-center bg-gray-800/50 rounded-xl p-6 border border-gray-700">
             <div className="text-gray-400 line-through text-xl mb-2">₹1487</div>
-            <div className="text-green-400 text-5xl font-bold my-2">₹99</div>
+            <div className="text-green-400 text-5xl font-bold my-2">₹750</div>
             <div className="text-gray-300 text-sm">Early Bird Special - Limited Seats Available</div>
           </div>
         </div>
@@ -412,7 +412,7 @@ export default function Home() {
               disabled={isSubmitting}
               className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Processing Payment...' : 'Pay ₹99 & Register Now'}
+              {isSubmitting ? 'Processing Payment...' : 'Pay ₹750 & Register Now'}
             </button>
           </form>
         </div>
