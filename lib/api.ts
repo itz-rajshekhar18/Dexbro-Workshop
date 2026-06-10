@@ -185,12 +185,16 @@ export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise
 // Verify Razorpay payment
 export async function verifyRazorpayPayment(paymentData: PaymentVerificationData): Promise<ApiResponse<Registration>> {
   try {
+    console.log('Verify payment - Original data:', paymentData);
+    const bodyString = JSON.stringify(paymentData);
+    console.log('Verify payment - Stringified body:', bodyString);
+    
     const response = await fetch(`${PAYMENT_API_URL}/verify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(paymentData),
+      body: bodyString,
     });
 
     if (!response.ok) {

@@ -107,18 +107,24 @@ export default function Home() {
         handler: async function (response: any) {
           try {
             // Verify payment and save registration
+            // Convert interests array to comma-separated string for Go backend
+            const registrationDataForBackend = {
+              ...formData,
+              interests: formData.interests.join(', ')
+            };
+            
             console.log('Verifying payment with data:', {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              registrationData: formData
+              registrationData: registrationDataForBackend
             });
             
             const verifyResponse = await verifyRazorpayPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              registrationData: formData
+              registrationData: registrationDataForBackend as any
             });
 
             if (verifyResponse.success) {
