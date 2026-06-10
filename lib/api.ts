@@ -158,12 +158,16 @@ export interface PaymentVerificationData {
 // Create Razorpay order
 export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise<ApiResponse<RazorpayOrderResponse>> {
   try {
+    console.log('Sending order data to backend:', orderData);
+    const bodyString = JSON.stringify(orderData);
+    console.log('Stringified body:', bodyString);
+    
     const response = await fetch(`${PAYMENT_API_URL}/create-order`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(orderData),
+      body: bodyString,
     });
 
     if (!response.ok) {

@@ -59,6 +59,17 @@ export default function Home() {
       }
 
       console.log('Creating order with backend...');
+      console.log('Order data:', {
+        amount: 75000,
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`,
+        notes: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        }
+      });
+      
       // Create Razorpay order
       const orderResponse = await createRazorpayOrder({
         amount: 75000, // ₹750 in paise (750 * 100)
@@ -104,6 +115,13 @@ export default function Home() {
         handler: async function (response: any) {
           try {
             // Verify payment and save registration
+            console.log('Verifying payment with data:', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              registrationData: formData
+            });
+            
             const verifyResponse = await verifyRazorpayPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
