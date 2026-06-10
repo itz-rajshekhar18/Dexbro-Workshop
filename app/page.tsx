@@ -43,12 +43,12 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative">
       {/* Character Background */}
-      <div className="fixed inset-0 pointer-events-none flex items-center justify-center opacity-10">
+      <div className="fixed top-0 left-0 right-0 pointer-events-none flex items-start justify-center opacity-10 pt-10">
         <Image
           src="/DexBro-Char.PNG"
           alt="DexBro Background"
-          width={800}
-          height={800}
+          width={600}
+          height={600}
           className="object-contain"
         />
       </div>
@@ -73,7 +73,7 @@ export default function Home() {
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header with Logo */}
-        <div className="text-center mb-12 mt-48">
+        <div className="text-center mb-12 mt-64 md:mt-72">
           <div className="flex justify-center mb-6">
             <div className="relative p-8 rounded-3xl">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 to-blue-600/30 blur-3xl rounded-full"></div>
