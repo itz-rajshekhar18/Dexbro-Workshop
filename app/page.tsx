@@ -63,11 +63,7 @@ export default function Home() {
         amount: 75000,
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
-        notes: {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-        }
+        notes: formData  // Send all form data
       });
       
       // Create Razorpay order
@@ -75,11 +71,7 @@ export default function Home() {
         amount: 75000, // ₹750 in paise (750 * 100)
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
-        notes: {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-        }
+        notes: formData  // Send complete registration data
       });
 
       console.log('Order response:', orderResponse);
