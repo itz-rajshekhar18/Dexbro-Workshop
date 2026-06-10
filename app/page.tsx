@@ -82,6 +82,16 @@ export default function Home() {
 
       const order = orderResponse.data;
 
+      // Check if Razorpay key is configured
+      if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+        alert('Razorpay is not configured. Please contact support.');
+        console.error('NEXT_PUBLIC_RAZORPAY_KEY_ID is missing');
+        setIsSubmitting(false);
+        return;
+      }
+
+      console.log('Opening Razorpay payment modal...');
+
       // Razorpay payment options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
