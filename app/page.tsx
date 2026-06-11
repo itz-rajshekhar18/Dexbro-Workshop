@@ -486,6 +486,107 @@ export default function Home() {
           </form>
         </div>
 
+        {/* AI Concepts Visualization */}
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700">
+          <h2 className="text-3xl font-bold text-center mb-8 text-white">
+            <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
+              Explore AI Concepts
+            </span>
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Neural Network Animation */}
+            <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-violet-500 transition-all group">
+              <h3 className="text-xl font-bold text-violet-300 mb-4 text-center">Neural Networks</h3>
+              <div className="flex justify-center items-center h-48">
+                <svg width="200" height="180" viewBox="0 0 200 180" className="overflow-visible">
+                  {/* Input Layer */}
+                  <circle cx="30" cy="40" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0s'}} />
+                  <circle cx="30" cy="90" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0.2s'}} />
+                  <circle cx="30" cy="140" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0.4s'}} />
+                  
+                  {/* Hidden Layer */}
+                  <circle cx="100" cy="30" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '0.6s'}} />
+                  <circle cx="100" cy="70" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '0.8s'}} />
+                  <circle cx="100" cy="110" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '1s'}} />
+                  <circle cx="100" cy="150" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '1.2s'}} />
+                  
+                  {/* Output Layer */}
+                  <circle cx="170" cy="60" r="8" fill="#06b6d4" className="animate-pulse-node" style={{animationDelay: '1.4s'}} />
+                  <circle cx="170" cy="120" r="8" fill="#06b6d4" className="animate-pulse-node" style={{animationDelay: '1.6s'}} />
+                  
+                  {/* Connections with animated flow */}
+                  <line x1="38" y1="40" x2="92" y2="30" stroke="#3b82f6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" />
+                  <line x1="38" y1="90" x2="92" y2="70" stroke="#3b82f6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" style={{animationDelay: '0.5s'}} />
+                  <line x1="108" y1="30" x2="162" y2="60" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" style={{animationDelay: '1s'}} />
+                  <line x1="108" y1="110" x2="162" y2="120" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" style={{animationDelay: '1.5s'}} />
+                </svg>
+              </div>
+              <p className="text-gray-400 text-sm text-center mt-4">Learn how neural networks process information layer by layer</p>
+            </div>
+
+            {/* NLP Animation */}
+            <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 transition-all group">
+              <h3 className="text-xl font-bold text-blue-300 mb-4 text-center">Natural Language Processing</h3>
+              <div className="flex justify-center items-center h-48 flex-col gap-3">
+                <div className="relative">
+                  <div className="text-4xl animate-bounce-slow">💬</div>
+                </div>
+                <div className="flex gap-2 flex-wrap justify-center">
+                  {['Hello', 'AI', 'World', '!'].map((word, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-blue-600/30 rounded-lg text-blue-200 text-sm font-mono animate-fade-in-up"
+                      style={{animationDelay: `${i * 0.2}s`}}
+                    >
+                      {word}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <div className="w-12 h-2 bg-violet-600 rounded animate-pulse"></div>
+                  <div className="w-16 h-2 bg-blue-600 rounded animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-10 h-2 bg-cyan-600 rounded animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                </div>
+              </div>
+              <p className="text-gray-400 text-sm text-center mt-4">Understand how AI processes and generates human language</p>
+            </div>
+
+            {/* Machine Learning Animation */}
+            <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-cyan-500 transition-all group">
+              <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center">Machine Learning</h3>
+              <div className="flex justify-center items-center h-48">
+                <svg width="200" height="180" viewBox="0 0 200 180">
+                  {/* Data points */}
+                  <g className="animate-pulse-node">
+                    <circle cx="40" cy="140" r="4" fill="#3b82f6" />
+                    <circle cx="60" cy="120" r="4" fill="#3b82f6" />
+                    <circle cx="80" cy="100" r="4" fill="#3b82f6" />
+                    <circle cx="100" cy="80" r="4" fill="#3b82f6" />
+                    <circle cx="120" cy="60" r="4" fill="#3b82f6" />
+                    <circle cx="140" cy="40" r="4" fill="#3b82f6" />
+                  </g>
+                  {/* Learning curve */}
+                  <path
+                    d="M 40 140 Q 100 80 160 40"
+                    stroke="#06b6d4"
+                    strokeWidth="3"
+                    fill="none"
+                    className="animate-data-flow"
+                    strokeDasharray="4"
+                  />
+                  {/* Prediction arrow */}
+                  <g className="animate-bounce-slow">
+                    <line x1="160" y1="40" x2="180" y2="30" stroke="#10b981" strokeWidth="2" />
+                    <polygon points="180,30 175,35 185,35" fill="#10b981" />
+                  </g>
+                </svg>
+              </div>
+              <p className="text-gray-400 text-sm text-center mt-4">Discover how machines learn from data and improve over time</p>
+            </div>
+          </div>
+        </div>
+
         {/* What You'll Learn */}
         <div className="bg-gradient-to-br from-violet-900/40 to-blue-900/40 backdrop-blur-lg rounded-3xl p-8 mt-8 shadow-2xl border-2 border-blue-500/30 animate-slide-in-up">
           <h2 className="text-4xl font-bold text-violet-300 text-center mb-8 flex items-center justify-center gap-3">
