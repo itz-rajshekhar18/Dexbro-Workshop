@@ -543,6 +543,118 @@ export default function Home() {
           </div>
         </div>
 
+        {/* How DexBro Redefines Learning */}
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 md:p-10 mt-8 shadow-2xl border border-gray-700">
+          <div className="text-center mb-8">
+            <div className="inline-block bg-violet-600/20 px-6 py-2 rounded-full border border-violet-500/30 mb-4">
+              <span className="text-violet-300 font-semibold">Study Transformation</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              How DexBro Redefines Student Life
+            </h2>
+            <p className="text-gray-400 text-lg">
+              A side-by-side comparison of scattered student routines versus a single smart study dashboard
+            </p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left p-4 text-gray-400 font-semibold uppercase text-sm">Workflow / Feature</th>
+                  <th className="text-left p-4 text-gray-400 font-semibold uppercase text-sm">The Scattered Way</th>
+                  <th className="text-left p-4 text-gray-400 font-semibold uppercase text-sm">With DexBro</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-800">
+                {[
+                  {
+                    feature: 'Student Setup',
+                    icon: '📚',
+                    scattered: 'Profiles, class details, subjects, interests, and goals live in separate notebooks or apps',
+                    withDexbro: 'Student onboarding captures profile, class, section, subjects, interests, and academic goals'
+                  },
+                  {
+                    feature: 'Daily Planning',
+                    icon: '📅',
+                    scattered: 'Checking group messages, diaries, and calendars to remember classes, tests, and events',
+                    withDexbro: 'Personal timetable shows daily and weekly schedules, exam dates, timings, and upcoming events'
+                  },
+                  {
+                    feature: 'Attendance Tracking',
+                    icon: '✅',
+                    scattered: 'Waiting for school updates and guessing whether attendance is still in a safe range',
+                    withDexbro: 'Attendance records, absence reports, trends, percentages, and downloadable reports stay visible'
+                  },
+                  {
+                    feature: 'Progress Analytics',
+                    icon: '📊',
+                    scattered: 'Marks, homework completion, strengths, and weak areas are hard to connect manually',
+                    withDexbro: 'Student analytics reveal performance, attendance, homework progress, strengths, and weaknesses'
+                  },
+                  {
+                    feature: 'AI Learning Tools',
+                    icon: '🤖',
+                    scattered: 'Waiting until the next class or searching random videos when a concept is unclear',
+                    withDexbro: 'AI support helps with doubts, explanations, personalized plans, quizzes, and career guidance'
+                  },
+                  {
+                    feature: 'Homework System',
+                    icon: '📝',
+                    scattered: 'Assignments get buried in chats, photos, notebooks, and last-minute reminders',
+                    withDexbro: 'View tasks, submit work, track deadlines, receive feedback, and get AI-assisted study support'
+                  },
+                  {
+                    feature: 'Exam Center',
+                    icon: '📖',
+                    scattered: 'Practice papers and mock test analysis are disconnected from revision planning',
+                    withDexbro: 'Mock tests, practice papers, rankings, performance analysis, and improvement suggestions align'
+                  },
+                  {
+                    feature: 'Collaboration',
+                    icon: '💬',
+                    scattered: 'Study groups, announcements, school updates, and resources get scattered across chats',
+                    withDexbro: 'Community spaces support discussions, study groups, resource sharing, messaging, and updates'
+                  },
+                  {
+                    feature: 'Reminders',
+                    icon: '🔔',
+                    scattered: 'Deadlines depend on memory, sticky notes, and repeated messages from classmates',
+                    withDexbro: 'Tasks, reminders, streaks, focus sessions, and achievement tracking keep study momentum clear'
+                  },
+                  {
+                    feature: 'Anytime Access',
+                    icon: '📱',
+                    scattered: 'Notes and school data stay split across devices, notebooks, and offline files',
+                    withDexbro: 'DexBro keeps the student dashboard available for planning, learning, and progress review'
+                  }
+                ].map((row, index) => (
+                  <tr key={index} className="hover:bg-gray-800/50 transition-colors">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{row.icon}</span>
+                        <span className="text-white font-semibold">{row.feature}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-start gap-2">
+                        <span className="text-red-400 mt-1">✗</span>
+                        <span className="text-gray-400 text-sm">{row.scattered}</span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-start gap-2">
+                        <span className="text-green-400 mt-1">✓</span>
+                        <span className="text-gray-300 text-sm">{row.withDexbro}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Footer with DexBro Image */}
         <div className="mt-12 text-center">
           <div className="flex justify-center mb-4">
