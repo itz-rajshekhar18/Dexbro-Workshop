@@ -199,7 +199,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative">
       {/* Character Background */}
-      <div className="fixed top-0 left-0 right-0 pointer-events-none flex items-start justify-center opacity-10 pt-10">
+      <div className="fixed top-0 left-0 right-0 pointer-events-none flex items-start justify-center opacity-25 pt-10">
         <Image
           src="/DexBro-Char.PNG"
           alt="DexBro Background"
