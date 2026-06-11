@@ -214,25 +214,25 @@ body {
 
 /* AI Neural Network Animation */
 @keyframes pulse-node {
-  0%, 100% { 
+  0%, 100% {
     opacity: 0.4;
     transform: scale(1);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: scale(1.2);
   }
 }
 
 @keyframes data-flow {
-  0% { 
+  0% {
     stroke-dashoffset: 20;
     opacity: 0.3;
   }
   50% {
     opacity: 1;
   }
-  100% { 
+  100% {
     stroke-dashoffset: 0;
     opacity: 0.3;
   }
@@ -255,45 +255,63 @@ body {
   animation: rotate-slow 20s linear infinite;
 }
 
-/* Crazy Techie Animations */
+/* ============================================
+   MATRIX RAIN
+   - No wrapper div needed in JSX, render
+     .matrix-char elements directly
+   ============================================ */
 
-/* Matrix Rain Effect */
-@keyframes matrix-rain {
-  0% { transform: translateY(-100%); opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-
-.matrix-rain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.15;
+@keyframes matrixFall {
+  0%   { transform: translateY(0);     opacity: 0.4; }
+  90%  {                               opacity: 0.4; }
+  100% { transform: translateY(100vh); opacity: 0;   }
 }
 
 .matrix-char {
-  position: absolute;
-  color: #00ff41;
+  position: fixed;
+  top: -20px;
+  color: #8b5cf6;
+  font-size: 12px;
   font-family: monospace;
-  font-size: 14px;
-  animation: matrix-rain linear infinite;
+  pointer-events: none;
+  z-index: 1;
+  animation-name: matrixFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* duration + delay set per-element via inline style */
 }
 
-/* Floating Particles */
+/* ============================================
+   BINARY RAIN
+   - Same pattern as matrix-char
+   ============================================ */
+
+.binary-rain {
+  position: fixed;
+  top: -30px;
+  color: #3b82f6;
+  font-size: 10px;
+  font-family: monospace;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+  animation-name: matrixFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  /* duration + delay set per-element via inline style */
+}
+
+/* ============================================
+   FLOATING PARTICLES
+   - Previously referenced float-particle but
+     the keyframe was never defined — fixed.
+   ============================================ */
+
 @keyframes float-particle {
-  0%, 100% { 
-    transform: translate(0, 0) rotate(0deg);
-    opacity: 0;
-  }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { 
-    transform: translate(100px, -100vh) rotate(360deg);
-    opacity: 0;
-  }
+  0%   { transform: translateY(0)      scale(1);   opacity: 0; }
+  10%  {                                           opacity: 1; }
+  90%  {                                           opacity: 1; }
+  100% { transform: translateY(-100vh) scale(0);   opacity: 0; }
 }
 
 .particle {
@@ -305,15 +323,16 @@ body {
   pointer-events: none;
   z-index: 1;
   animation: float-particle linear infinite;
+  /* duration + delay set per-element via inline style */
 }
 
 /* Glitch Effect */
 @keyframes glitch {
-  0% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
+  0%   { transform: translate(0); }
+  20%  { transform: translate(-2px,  2px); }
+  40%  { transform: translate(-2px, -2px); }
+  60%  { transform: translate( 2px,  2px); }
+  80%  { transform: translate( 2px, -2px); }
   100% { transform: translate(0); }
 }
 
@@ -323,10 +342,10 @@ body {
 
 /* Neon Glow Pulse */
 @keyframes neon-pulse {
-  0%, 100% { 
+  0%, 100% {
     box-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
   }
-  50% { 
+  50% {
     box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6, 0 0 40px #8b5cf6, 0 0 60px #8b5cf6;
   }
 }
@@ -335,26 +354,9 @@ body {
   animation: neon-pulse 2s ease-in-out infinite;
 }
 
-/* Binary Rain */
-@keyframes binary-fall {
-  0% { transform: translateY(-100%); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
-
-.binary-rain {
-  position: absolute;
-  color: #06b6d4;
-  font-family: monospace;
-  font-size: 12px;
-  animation: binary-fall linear infinite;
-  text-shadow: 0 0 5px #06b6d4;
-}
-
 /* Scan Line Effect */
 @keyframes scan-line {
-  0% { transform: translateY(0); }
+  0%   { transform: translateY(0); }
   100% { transform: translateY(100vh); }
 }
 
@@ -374,7 +376,7 @@ body {
 /* Rotating Hexagon Grid */
 @keyframes rotate-hex {
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .hex-background {
@@ -383,8 +385,8 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background-image: 
-    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(59, 130, 246, 0.05) 50px, rgba(59, 130, 246, 0.05) 51px),
+  background-image:
+    repeating-linear-gradient(0deg,  transparent, transparent 50px, rgba(59, 130, 246, 0.05) 50px, rgba(59, 130, 246, 0.05) 51px),
     repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(139, 92, 246, 0.05) 50px, rgba(139, 92, 246, 0.05) 51px);
   pointer-events: none;
   z-index: 1;
@@ -394,7 +396,7 @@ body {
 /* Circuit Board Lines */
 @keyframes circuit-pulse {
   0%, 100% { opacity: 0.1; }
-  50% { opacity: 0.3; }
+  50%       { opacity: 0.3; }
 }
 
 .circuit-line {
@@ -406,11 +408,11 @@ body {
 
 /* Hologram Effect */
 @keyframes hologram {
-  0%, 100% { 
-    opacity: 0.8;
+  0%, 100% {
+    opacity: 1;
     transform: translateY(0);
   }
-  50% { 
+  50% {
     opacity: 1;
     transform: translateY(-5px);
   }
@@ -429,4 +431,24 @@ body {
   background-size: 100% 4px;
   pointer-events: none;
   animation: scan-line 2s linear infinite;
+}
+
+/* Floating Tag Animation */
+@keyframes float-tag {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px) rotate(2deg);
+  }
+  50% {
+    transform: translateY(-15px) translateX(-5px) rotate(-1deg);
+  }
+  75% {
+    transform: translateY(-8px) translateX(3px) rotate(1deg);
+  }
+}
+
+.animate-float-tag {
+  animation: float-tag ease-in-out infinite;
 }

@@ -721,6 +721,85 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Student Problems - Scattered Pills */}
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700 scroll-animate">
+          <div className="text-center mb-6">
+            <h3 className="text-2xl font-bold text-white mb-2">Common Student Struggles</h3>
+            <p className="text-gray-400">Understand what to improve next</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-3 justify-center items-center">
+            {[
+              { text: 'Missed homework', color: 'bg-pink-600/20 text-pink-300 border-pink-600/30' },
+              { text: 'Lost resources', color: 'bg-red-600/20 text-red-300 border-red-600/30' },
+              { text: 'Low focus', color: 'bg-blue-600/20 text-blue-300 border-blue-600/30' },
+              { text: 'Exam panic', color: 'bg-purple-600/20 text-purple-300 border-purple-600/30' },
+              { text: 'Scattered notes', color: 'bg-cyan-600/20 text-cyan-300 border-cyan-600/30' },
+              { text: 'No clear goals', color: 'bg-rose-600/20 text-rose-300 border-rose-600/30' },
+              { text: 'Attendance anxiety', color: 'bg-indigo-600/20 text-indigo-300 border-indigo-600/30' },
+              { text: 'Group updates missed', color: 'bg-violet-600/20 text-violet-300 border-violet-600/30' },
+              { text: 'No revision plan', color: 'bg-sky-600/20 text-sky-300 border-sky-600/30' },
+              { text: 'Forgotten deadlines', color: 'bg-fuchsia-600/20 text-fuchsia-300 border-fuchsia-600/30' },
+              { text: 'Too many apps', color: 'bg-teal-600/20 text-teal-300 border-teal-600/30' },
+              { text: 'Weak areas hidden', color: 'bg-amber-600/20 text-amber-300 border-amber-600/30' },
+              { text: 'Marks feel random', color: 'bg-orange-600/20 text-orange-300 border-orange-600/30' },
+              { text: 'Doubts pile up', color: 'bg-emerald-600/20 text-emerald-300 border-emerald-600/30' }
+            ].map((problem, index) => (
+              <div
+                key={index}
+                className={`${problem.color} px-4 py-2 rounded-full border text-sm font-medium hover:scale-105 transition-transform cursor-default shadow-lg`}
+                style={{
+                  animationDelay: `${index * 0.1}s`
+                }}
+              >
+                {problem.text}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Student Problems - Floating Tags */}
+        <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700/50 scroll-animate overflow-hidden relative">
+          <h2 className="text-3xl font-bold text-center mb-4 text-white">
+            Common Student Struggles
+          </h2>
+          <p className="text-gray-400 text-center mb-8">Problems students face every day that DexBro helps solve</p>
+          
+          <div className="relative h-32 flex flex-wrap gap-3 items-center justify-center">
+            {[
+              { text: 'Missed homework', color: 'bg-pink-500/20 text-pink-300 border-pink-500/30' },
+              { text: 'Exam panic', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+              { text: 'Scattered notes', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+              { text: 'Attendance anxiety', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+              { text: 'No revision plan', color: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' },
+              { text: 'Forgotten deadlines', color: 'bg-red-500/20 text-red-300 border-red-500/30' },
+              { text: 'Low focus', color: 'bg-blue-500/20 text-blue-300 border-blue-500/30' },
+              { text: 'No clear goals', color: 'bg-pink-500/20 text-pink-300 border-pink-500/30' },
+              { text: 'Group updates missed', color: 'bg-violet-500/20 text-violet-300 border-violet-500/30' },
+              { text: 'Weak areas hidden', color: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+              { text: 'Too many apps', color: 'bg-green-500/20 text-green-300 border-green-500/30' },
+              { text: 'Marks feel random', color: 'bg-orange-500/20 text-orange-300 border-orange-500/30' },
+              { text: 'Doubts pile up', color: 'bg-purple-500/20 text-purple-300 border-purple-500/30' },
+              { text: 'Lost resources', color: 'bg-gray-500/20 text-gray-300 border-gray-500/30' },
+            ].map((problem, index) => (
+              <div
+                key={index}
+                className={`px-4 py-2 rounded-full border ${problem.color} text-sm font-medium whitespace-nowrap animate-float-tag`}
+                style={{
+                  animationDelay: `${index * 0.2}s`,
+                  animationDuration: `${3 + (index % 3)}s`
+                }}
+              >
+                {problem.text}
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-6">
+            <p className="text-violet-400 font-semibold text-lg">✨ DexBro organizes everything in one smart dashboard</p>
+          </div>
+        </div>
+
         {/* How DexBro Redefines Learning */}
         <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 md:p-10 mt-8 shadow-2xl border border-gray-700 scroll-animate">
           <div className="text-center mb-8">
