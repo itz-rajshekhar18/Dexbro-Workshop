@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { 
   Calendar, Clock, Timer, Monitor, User, Mail, Phone, GraduationCap,
@@ -17,7 +17,30 @@ declare global {
   }
 }
 
+// Scroll animation hook
+function useScrollAnimation() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.scroll-animate');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+}
+
 export default function Home() {
+  useScrollAnimation(); // Initialize scroll animations
+  
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<RegistrationData>({
@@ -292,7 +315,7 @@ export default function Home() {
         </div>
 
         {/* Workshop Info */}
-        <div className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 mb-8 shadow-xl border border-gray-700">
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-8 mb-8 shadow-xl border border-gray-700 scroll-animate">
           <h2 className="text-3xl font-bold text-white text-center mb-8">
             Workshop Details
           </h2>
@@ -326,7 +349,7 @@ export default function Home() {
         </div>
 
         {/* Registration Form */}
-        <div className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-10 shadow-xl border border-gray-700">
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-2xl p-10 shadow-xl border border-gray-700 scroll-animate">
           <h2 className="text-3xl font-bold text-center mb-2 text-white">
             Register for the Workshop
           </h2>
@@ -487,7 +510,7 @@ export default function Home() {
         </div>
 
         {/* AI Concepts Visualization */}
-        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700">
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700 scroll-animate">
           <h2 className="text-3xl font-bold text-center mb-8 text-white">
             <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
               Explore AI Concepts
@@ -588,7 +611,7 @@ export default function Home() {
         </div>
 
         {/* What You'll Learn */}
-        <div className="bg-gradient-to-br from-violet-900/40 to-blue-900/40 backdrop-blur-lg rounded-3xl p-8 mt-8 shadow-2xl border-2 border-blue-500/30 animate-slide-in-up">
+        <div className="bg-gradient-to-br from-violet-900/40 to-blue-900/40 backdrop-blur-lg rounded-3xl p-8 mt-8 shadow-2xl border-2 border-blue-500/30 scroll-animate">
           <h2 className="text-4xl font-bold text-violet-300 text-center mb-8 flex items-center justify-center gap-3">
             <Award size={36} />
             What You&apos;ll Learn
@@ -620,7 +643,7 @@ export default function Home() {
         </div>
 
         {/* Why Learn AI */}
-        <div className="bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl p-10 mt-8 shadow-2xl border-2 border-blue-400">
+        <div className="bg-gradient-to-br from-blue-600 to-violet-600 rounded-3xl p-10 mt-8 shadow-2xl border-2 border-blue-400 scroll-animate">
           <h2 className="text-4xl font-bold text-center mb-10 text-white flex items-center justify-center gap-3">
             <Sparkles size={36} />
             Why Learn AI Now?
@@ -645,7 +668,7 @@ export default function Home() {
         </div>
 
         {/* How DexBro Redefines Learning */}
-        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 md:p-10 mt-8 shadow-2xl border border-gray-700">
+        <div className="bg-gray-900/80 backdrop-blur-md rounded-3xl p-8 md:p-10 mt-8 shadow-2xl border border-gray-700 scroll-animate">
           <div className="text-center mb-8">
             <div className="inline-block bg-violet-600/20 px-6 py-2 rounded-full border border-violet-500/30 mb-4">
               <span className="text-violet-300 font-semibold">Study Transformation</span>
