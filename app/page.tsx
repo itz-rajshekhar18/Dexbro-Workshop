@@ -87,7 +87,7 @@ export default function Home() {
         amount: 75000,
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
-        notes: formData  // Send all form data
+        notes: formData
       });
       
       // Create Razorpay order
@@ -95,7 +95,7 @@ export default function Home() {
         amount: 75000, // ₹750 in paise (750 * 100)
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
-        notes: formData  // Send complete registration data
+        notes: formData
       });
 
       console.log('Order response:', orderResponse);
@@ -130,8 +130,6 @@ export default function Home() {
         order_id: order.id,
         handler: async function (response: any) {
           try {
-            // Verify payment and save registration
-            // Convert interests array to comma-separated string for Go backend
             const registrationDataForBackend = {
               ...formData,
               interests: formData.interests.join(', ')
@@ -190,7 +188,7 @@ export default function Home() {
           interests: formData.interests.join(', ')
         },
         theme: {
-          color: '#8b5cf6' // Violet color matching your brand
+          color: '#8b5cf6'
         },
         modal: {
           ondismiss: function() {
@@ -248,23 +246,19 @@ export default function Home() {
       ))}
       
       {/* Matrix Rain Effect - Client Side Only */}
-      {mounted && (
-        <div className="matrix-rain">
-          {Array.from({ length: 30 }).map((_, i) => (
-            <div
-              key={`matrix-${i}`}
-              className="matrix-char"
-              style={{
-                left: `${(i * 3.33)}%`,
-                animationDuration: `${Math.random() * 3 + 2}s`,
-                animationDelay: `${Math.random() * 2}s`
-              }}
-            >
-              {['0', '1', '{', '}', '[', ']', '<', '>', 'AI', 'ML'][Math.floor(Math.random() * 10)]}
-            </div>
-          ))}
+      {mounted && Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={`matrix-${i}`}
+          className="matrix-char"
+          style={{
+            left: `${(i * 3.33)}%`,
+            animationDuration: `${Math.random() * 3 + 2}s`,
+            animationDelay: `${Math.random() * 2}s`
+          }}
+        >
+          {['0', '1', '{', '}', '[', ']', '<', '>', 'AI', 'ML'][Math.floor(Math.random() * 10)]}
         </div>
-      )}
+      ))}
       
       {/* Binary Rain - Client Side Only */}
       {mounted && Array.from({ length: 15 }).map((_, i) => (
@@ -415,7 +409,7 @@ export default function Home() {
           </h2>
           <p className="text-center text-gray-400 mb-8">Fill in your details to secure your spot</p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5" suppressHydrationWarning>
             {/* Name */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
