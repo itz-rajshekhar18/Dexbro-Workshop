@@ -190,3 +190,13 @@ body {
 .animate-slide-in-benefit {
   animation: slide-in-benefit 0.5s ease;
 }
+
+/* Sliding Text Animation */
+@keyframes slide-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-slide-left {
+  animation: slide-left 30s linear infinite;
+}

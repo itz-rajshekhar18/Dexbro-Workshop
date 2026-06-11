@@ -209,6 +209,41 @@ export default function Home() {
         />
       </div>
 
+      {/* Sliding Text Banner */}
+      <div className="w-full bg-gradient-to-r from-violet-600 via-blue-600 to-violet-600 py-3 overflow-hidden relative z-20 shadow-lg">
+        <div className="flex whitespace-nowrap animate-slide-left">
+          <div className="flex items-center gap-8 px-8">
+            <span className="text-white font-semibold">✨ Learn AI with hands-on projects</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🚀 Build real-world AI applications</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🎓 Get certified in AI & ML</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">💻 Live 90-minute hands-on session</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🌟 Expert mentorship & guidance</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">📚 Access to premium AI tools</span>
+            <span className="text-white/80">•</span>
+          </div>
+          {/* Duplicate for seamless loop */}
+          <div className="flex items-center gap-8 px-8">
+            <span className="text-white font-semibold">✨ Learn AI with hands-on projects</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🚀 Build real-world AI applications</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🎓 Get certified in AI & ML</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">💻 Live 90-minute hands-on session</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">🌟 Expert mentorship & guidance</span>
+            <span className="text-white/80">•</span>
+            <span className="text-white font-semibold">📚 Access to premium AI tools</span>
+            <span className="text-white/80">•</span>
+          </div>
+        </div>
+      </div>
+
       {/* Confetti */}
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50">
