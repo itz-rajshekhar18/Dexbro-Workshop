@@ -226,7 +226,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative" suppressHydrationWarning>
       {/* Rotating Hex Grid Background */}
       <div className="hex-background"></div>
       
