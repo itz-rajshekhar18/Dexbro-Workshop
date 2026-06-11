@@ -43,6 +43,7 @@ export default function Home() {
   
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
@@ -219,8 +220,67 @@ export default function Home() {
     }));
   };
 
+  // Only render animations on client side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative">
+      {/* Rotating Hex Grid Background */}
+      <div className="hex-background"></div>
+      
+      {/* Scan Line Effect */}
+      <div className="scan-line"></div>
+      
+      {/* Floating Particles - Client Side Only */}
+      {mounted && Array.from({ length: 20 }).map((_, i) => (
+        <div
+          key={`particle-${i}`}
+          className="particle"
+          style={{
+            left: `${Math.random() * 100}%`,
+            animationDuration: `${Math.random() * 10 + 10}s`,
+            animationDelay: `${Math.random() * 5}s`,
+            background: ['#3b82f6', '#8b5cf6', '#06b6d4'][Math.floor(Math.random() * 3)]
+          }}
+        />
+      ))}
+      
+      {/* Matrix Rain Effect - Client Side Only */}
+      {mounted && (
+        <div className="matrix-rain">
+          {Array.from({ length: 30 }).map((_, i) => (
+            <div
+              key={`matrix-${i}`}
+              className="matrix-char"
+              style={{
+                left: `${(i * 3.33)}%`,
+                animationDuration: `${Math.random() * 3 + 2}s`,
+                animationDelay: `${Math.random() * 2}s`
+              }}
+            >
+              {['0', '1', '{', '}', '[', ']', '<', '>', 'AI', 'ML'][Math.floor(Math.random() * 10)]}
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Binary Rain - Client Side Only */}
+      {mounted && Array.from({ length: 15 }).map((_, i) => (
+        <div
+          key={`binary-${i}`}
+          className="binary-rain"
+          style={{
+            left: `${Math.random() * 100}%`,
+            animationDuration: `${Math.random() * 5 + 5}s`,
+            animationDelay: `${Math.random() * 3}s`
+          }}
+        >
+          {Math.random() > 0.5 ? '01010101' : '10101010'}
+        </div>
+      ))}
+      
       {/* Character Background */}
       <div className="fixed top-0 left-0 right-0 pointer-events-none flex items-start justify-center opacity-50 pt-24">
         <Image
@@ -289,14 +349,14 @@ export default function Home() {
         {/* Header with Logo */}
         <div className="text-center mb-12 mt-57 md:mt-40">
           <div className="flex justify-center mb-6">
-            <div className="relative p-8 rounded-3xl">
+            <div className="relative p-8 rounded-3xl neon-pulse">
               <div className="absolute inset-0 bg-gradient-to-br from-violet-600/30 to-blue-600/30 blur-3xl rounded-full"></div>
               <Image
                 src="/DexLabs.PNG"
                 alt="DexLabs Logo"
                 width={400}
                 height={160}
-                className="relative drop-shadow-2xl"
+                className="relative drop-shadow-2xl hologram-effect"
                 style={{ 
                   mixBlendMode: 'lighten',
                   filter: 'drop-shadow(0 0 40px rgba(139, 92, 246, 0.6))'
@@ -502,7 +562,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed neon-pulse hover:glitch-effect"
             >
               {isSubmitting ? 'Processing Payment...' : 'Pay ₹750 & Register Now'}
             </button>

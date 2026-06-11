@@ -254,3 +254,179 @@ body {
 .animate-rotate-slow {
   animation: rotate-slow 20s linear infinite;
 }
+
+/* Crazy Techie Animations */
+
+/* Matrix Rain Effect */
+@keyframes matrix-rain {
+  0% { transform: translateY(-100%); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.matrix-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.15;
+}
+
+.matrix-char {
+  position: absolute;
+  color: #00ff41;
+  font-family: monospace;
+  font-size: 14px;
+  animation: matrix-rain linear infinite;
+}
+
+/* Floating Particles */
+@keyframes float-particle {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { 
+    transform: translate(100px, -100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: #3b82f6;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  animation: float-particle linear infinite;
+}
+
+/* Glitch Effect */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-effect {
+  animation: glitch 0.3s infinite;
+}
+
+/* Neon Glow Pulse */
+@keyframes neon-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+  }
+  50% { 
+    box-shadow: 0 0 10px #8b5cf6, 0 0 20px #8b5cf6, 0 0 40px #8b5cf6, 0 0 60px #8b5cf6;
+  }
+}
+
+.neon-pulse {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+/* Binary Rain */
+@keyframes binary-fall {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.binary-rain {
+  position: absolute;
+  color: #06b6d4;
+  font-family: monospace;
+  font-size: 12px;
+  animation: binary-fall linear infinite;
+  text-shadow: 0 0 5px #06b6d4;
+}
+
+/* Scan Line Effect */
+@keyframes scan-line {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(transparent, #8b5cf6, transparent);
+  pointer-events: none;
+  z-index: 5;
+  animation: scan-line 4s linear infinite;
+  opacity: 0.3;
+}
+
+/* Rotating Hexagon Grid */
+@keyframes rotate-hex {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hex-background {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(59, 130, 246, 0.05) 50px, rgba(59, 130, 246, 0.05) 51px),
+    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(139, 92, 246, 0.05) 50px, rgba(139, 92, 246, 0.05) 51px);
+  pointer-events: none;
+  z-index: 1;
+  animation: rotate-hex 60s linear infinite;
+}
+
+/* Circuit Board Lines */
+@keyframes circuit-pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
+
+.circuit-line {
+  position: absolute;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  height: 1px;
+  animation: circuit-pulse 3s ease-in-out infinite;
+}
+
+/* Hologram Effect */
+@keyframes hologram {
+  0%, 100% { 
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+  50% { 
+    opacity: 1;
+    transform: translateY(-5px);
+  }
+}
+
+.hologram-effect {
+  animation: hologram 3s ease-in-out infinite;
+  position: relative;
+}
+
+.hologram-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 50%, rgba(59, 130, 246, 0.1) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation: scan-line 2s linear infinite;
+}
