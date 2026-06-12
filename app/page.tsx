@@ -286,19 +286,19 @@ export default function Home() {
     let currentVel = initialVelocity;
     let currentPos = 0;
     const gravity = 5;
-    const targetHeight = 600; // pixels to reach
+    const targetHeight = 600; // pixels to reach upward
     let maxHeight = 0;
     
     const animate = () => {
       currentVel -= gravity;
-      currentPos -= currentVel;
+      currentPos += currentVel; // Going UP (positive adds to position)
       
       if (currentPos < 0) currentPos = 0;
       
       maxHeight = Math.max(maxHeight, currentPos);
-      setLanyardPosition({ x: 0, y: -currentPos });
+      setLanyardPosition({ x: 0, y: -currentPos }); // Negative Y moves it UP on screen
       
-      if (currentPos > 0 && currentVel < 0) {
+      if (currentPos > 0 && currentVel > 0) {
         requestAnimationFrame(animate);
       } else {
         // Launch ended - check if won
@@ -469,7 +469,7 @@ export default function Home() {
           onTouchEnd={handleRelease}
         >
           {/* Subtle overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-transparent pointer-events-none"></div>
           
           {/* Floating Challenge Card - Top Right */}
           <div className="absolute top-24 right-8 bg-gradient-to-br from-violet-600/30 to-blue-600/30 backdrop-blur-xl p-6 rounded-2xl border border-violet-400/30 shadow-2xl max-w-sm animate-slide-in-right">
@@ -518,26 +518,15 @@ export default function Home() {
             )}
           </div>
 
-          {/* Minimal Target Indicator - Subtle line across page */}
+          {/* Target Line - Invisible but marks the goal */}
           <div 
-            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/40 to-transparent z-10 pointer-events-none"
-            style={{ top: 'calc(50% - 300px)' }}
+            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent z-10 pointer-events-none"
+            style={{ top: '80px' }}
           >
             <div className="absolute left-1/2 -translate-x-1/2 -top-6">
               <div className="bg-green-500/10 backdrop-blur-sm px-4 py-1 rounded-full border border-green-400/30">
                 <span className="text-green-300 text-xs font-semibold">🎯 TARGET</span>
               </div>
-            </div>
-          </div>
-
-          {/* Slingshot Base - Bottom Center */}
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 pointer-events-none">
-            <div className="relative">
-              {/* Base pole */}
-              <div className="w-6 h-40 bg-gradient-to-b from-gray-600 to-gray-800 rounded-t-xl border-2 border-gray-500/50 shadow-2xl mx-auto"></div>
-              
-              {/* Base platform */}
-              <div className="w-24 h-4 bg-gradient-to-b from-gray-700 to-gray-900 rounded-lg border-2 border-gray-600/50 -mt-1"></div>
             </div>
           </div>
 
@@ -553,21 +542,23 @@ export default function Home() {
                   </feMerge>
                 </filter>
               </defs>
+              {/* Left elastic band */}
               <line
                 x1="calc(50% - 12px)"
-                y1="calc(100% - 155px)"
-                x2={`calc(50% + ${lanyardPosition.x}px)`}
-                y2={`calc(100% - 155px + ${lanyardPosition.y}px)`}
+                y1="0"
+                x2={`calc(50% + ${lanyardPosition.x}px - 25px)`}
+                y2={`calc(220px + ${lanyardPosition.y}px)`}
                 stroke="#fbbf24"
                 strokeWidth="4"
                 opacity="0.8"
                 filter="url(#glow)"
               />
+              {/* Right elastic band */}
               <line
                 x1="calc(50% + 12px)"
-                y1="calc(100% - 155px)"
-                x2={`calc(50% + ${lanyardPosition.x}px)`}
-                y2={`calc(100% - 155px + ${lanyardPosition.y}px)`}
+                y1="0"
+                x2={`calc(50% + ${lanyardPosition.x}px + 25px)`}
+                y2={`calc(220px + ${lanyardPosition.y}px)`}
                 stroke="#fbbf24"
                 strokeWidth="4"
                 opacity="0.8"
@@ -576,62 +567,74 @@ export default function Home() {
             </svg>
           )}
 
-          {/* Premium Lanyard Card */}
+          {/* Premium Lanyard Card - Hanging from top */}
           <div
             className={`absolute left-1/2 -translate-x-1/2 cursor-grab active:cursor-grabbing z-20 ${
               gameWon ? 'pointer-events-none' : ''
             }`}
             style={{
-              bottom: `${155 - lanyardPosition.y}px`,
+              top: `${220 + lanyardPosition.y}px`,
               transform: `translate(-50%, 0) translateX(${lanyardPosition.x}px)`,
               transition: isDragging ? 'none' : 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
             onMouseDown={handleLanyardMouseDown}
             onTouchStart={handleLanyardTouchStart}
           >
-            {/* Lanyard String with Glow */}
-            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-0.5 h-16 bg-gradient-to-b from-gray-400 to-gray-600 shadow-lg"></div>
-            
-            {/* Hook/Ring */}
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-8 h-8 border-4 border-gray-500 rounded-full bg-gray-700 shadow-xl"></div>
+            {/* Lanyard Strap - Goes up from the badge */}
+            <div className="absolute -top-60 left-1/2 -translate-x-1/2 w-6 h-60 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 shadow-xl overflow-hidden">
+              {/* Strap texture/pattern */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="h-1 bg-yellow-600 absolute top-8"></div>
+                <div className="h-1 bg-yellow-600 absolute top-16"></div>
+                <div className="h-1 bg-yellow-600 absolute top-24"></div>
+              </div>
+              
+              {/* Strap shine */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            </div>
+
+            {/* Metal Ring connecting strap to badge */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-8 border-4 border-gray-600 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 shadow-xl"></div>
 
             {/* Premium Lanyard Badge */}
             <div className={`relative group ${!isLaunched && !isDragging ? 'animate-swing' : ''}`}>
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-blue-500 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-300 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
               
-              {/* Main card */}
-              <div className={`relative bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600 w-32 h-44 rounded-2xl shadow-2xl border-4 ${
-                gameWon ? 'border-yellow-400 animate-bounce' : 'border-white/40'
+              {/* Main card - Beige/cream color like the image */}
+              <div className={`relative bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 w-40 h-56 rounded-2xl shadow-2xl border-4 ${
+                gameWon ? 'border-yellow-400 animate-bounce' : 'border-amber-200'
               } overflow-hidden transform group-hover:scale-105 transition-transform`}>
                 {/* Shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent"></div>
                 
-                {/* Hole for string */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-4 border-gray-600 shadow-inner"></div>
+                {/* Top hole for ring */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-10 h-6 bg-gray-800 rounded-full border-4 border-gray-600 shadow-inner"></div>
                 
                 {/* Content */}
-                <div className="relative h-full flex flex-col items-center justify-center pt-6 px-3">
-                  {/* Logo area */}
-                  <div className="text-white font-bold text-sm mb-2 tracking-wider">DEXLABS</div>
+                <div className="relative h-full flex flex-col items-center justify-center pt-8 px-4">
+                  {/* Logo/Brand using DexLabs image or text */}
+                  <div className="mb-4 w-28 h-12 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg flex items-center justify-center shadow-lg">
+                    <span className="text-gray-700 font-bold text-xl tracking-wider">DEX</span>
+                  </div>
                   
                   {/* Icon */}
-                  <div className="text-5xl mb-2 filter drop-shadow-lg">🎓</div>
+                  <div className="text-6xl mb-3 filter drop-shadow-lg">🎓</div>
                   
                   {/* Event info */}
                   <div className="text-center">
-                    <div className="text-white font-bold text-xs mb-1">AI Workshop</div>
-                    <div className="text-white/80 text-[10px] font-medium">June 14, 2026</div>
+                    <div className="text-gray-800 font-bold text-sm mb-1">AI Workshop</div>
+                    <div className="text-gray-600 text-xs font-medium">June 14, 2026</div>
                   </div>
                   
                   {/* Badge number */}
-                  <div className="absolute bottom-3 right-3 bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded text-white text-[9px] font-mono">
-                    #{Math.floor(Math.random() * 1000)}
+                  <div className="absolute bottom-4 right-4 bg-gray-800/80 backdrop-blur-sm px-2 py-1 rounded text-white text-[10px] font-mono">
+                    #{Math.floor(Math.random() * 1000).toString().padStart(3, '0')}
                   </div>
                 </div>
 
-                {/* Decorative pattern */}
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-pink-400 to-cyan-400"></div>
+                {/* Decorative accent line at bottom */}
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400"></div>
               </div>
             </div>
           </div>
