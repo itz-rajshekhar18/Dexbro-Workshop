@@ -44,6 +44,13 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showSlingshotGame, setShowSlingshotGame] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [lanyardPosition, setLanyardPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [velocity, setVelocity] = useState(0);
+  const [isLaunched, setIsLaunched] = useState(false);
   const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
@@ -158,6 +165,9 @@ export default function Home() {
                 alert('🎉 Registration & Payment Successful!\n\nPayment ID: ' + response.razorpay_payment_id + '\n\nWelcome to the AI Workshop!\nCheck your email for workshop details and Zoom link.');
                 setShowConfetti(false);
                 
+                // Show slingshot game
+                setShowSlingshotGame(true);
+                
                 // Reset form
                 setFormData({
                   name: '',
@@ -218,6 +228,114 @@ export default function Home() {
         ? prev.interests.filter(i => i !== interest)
         : [...prev.interests, interest]
     }));
+  };
+
+  // Slingshot Game Handlers
+  const handleLanyardMouseDown = (e: React.MouseEvent) => {
+    if (isLaunched) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleLanyardTouchStart = (e: React.TouchEvent) => {
+    if (isLaunched) return;
+    setIsDragging(true);
+    const touch = e.touches[0];
+    setDragStart({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || isLaunched) return;
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    
+    // Limit pull distance (max 150px down)
+    const limitedY = Math.min(Math.max(deltaY, 0), 150);
+    setLanyardPosition({ x: deltaX * 0.3, y: limitedY });
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || isLaunched) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - dragStart.x;
+    const deltaY = touch.clientY - dragStart.y;
+    
+    const limitedY = Math.min(Math.max(deltaY, 0), 150);
+    setLanyardPosition({ x: deltaX * 0.3, y: limitedY });
+  };
+
+  const handleRelease = () => {
+    if (!isDragging || isLaunched) return;
+    setIsDragging(false);
+    
+    // Calculate launch velocity based on pull distance
+    const pullStrength = lanyardPosition.y;
+    const launchVelocity = pullStrength * 8; // Velocity multiplier
+    
+    if (pullStrength > 10) {
+      setIsLaunched(true);
+      setVelocity(launchVelocity);
+      animateLaunch(launchVelocity);
+    } else {
+      // Reset if not pulled enough
+      setLanyardPosition({ x: 0, y: 0 });
+    }
+  };
+
+  const animateLaunch = (initialVelocity: number) => {
+    let currentVel = initialVelocity;
+    let currentPos = 0;
+    const gravity = 5;
+    const targetHeight = 600; // pixels to reach
+    let maxHeight = 0;
+    
+    const animate = () => {
+      currentVel -= gravity;
+      currentPos -= currentVel;
+      
+      if (currentPos < 0) currentPos = 0;
+      
+      maxHeight = Math.max(maxHeight, currentPos);
+      setLanyardPosition({ x: 0, y: -currentPos });
+      
+      if (currentPos > 0 && currentVel < 0) {
+        requestAnimationFrame(animate);
+      } else {
+        // Launch ended - check if won
+        if (maxHeight >= targetHeight) {
+          setGameWon(true);
+          setTimeout(() => {
+            // Success sound or animation can be triggered here
+          }, 300);
+        } else {
+          setTimeout(() => {
+            // Close to winning
+            if (maxHeight >= targetHeight * 0.85) {
+              alert('So close! 🎯 Pull harder and try again!');
+            } else if (maxHeight >= targetHeight * 0.6) {
+              alert('Good try! 💪 You can do better!');
+            } else {
+              alert('Pull the lanyard down more for extra power! 🚀');
+            }
+            resetGame();
+          }, 500);
+        }
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  };
+
+  const resetGame = () => {
+    setIsLaunched(false);
+    setLanyardPosition({ x: 0, y: 0 });
+    setVelocity(0);
+  };
+
+  const closeGame = () => {
+    setShowSlingshotGame(false);
+    setGameWon(false);
+    resetGame();
   };
 
   // Only render animations on client side
@@ -338,6 +456,211 @@ export default function Home() {
               }}
             />
           ))}
+        </div>
+      )}
+
+      {/* Slingshot Game - Integrated into Main UI */}
+      {showSlingshotGame && (
+        <div 
+          className="fixed inset-0 z-50 pointer-events-auto"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleRelease}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleRelease}
+        >
+          {/* Subtle overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-transparent pointer-events-none"></div>
+          
+          {/* Floating Challenge Card - Top Right */}
+          <div className="absolute top-24 right-8 bg-gradient-to-br from-violet-600/30 to-blue-600/30 backdrop-blur-xl p-6 rounded-2xl border border-violet-400/30 shadow-2xl max-w-sm animate-slide-in-right">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="text-2xl font-bold text-white mb-1">🎯 Bonus Challenge</h3>
+                <p className="text-violet-200 text-sm">Launch the lanyard high enough!</p>
+              </div>
+              <button
+                onClick={closeGame}
+                className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="bg-black/30 rounded-xl p-4 mb-3 border border-violet-500/20">
+              <div className="flex items-center gap-3">
+                <div className="text-4xl">🎁</div>
+                <div>
+                  <div className="text-white font-bold text-lg">Win DexChapter</div>
+                  <div className="text-violet-300 text-sm">Free for 1 week!</div>
+                </div>
+              </div>
+            </div>
+
+            {!isLaunched && !isDragging && (
+              <div className="text-center">
+                <div className="text-cyan-300 text-sm font-medium animate-pulse mb-2">
+                  👇 Pull down & release the lanyard
+                </div>
+                <div className="flex justify-center gap-2">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                </div>
+              </div>
+            )}
+
+            {isLaunched && !gameWon && (
+              <div className="text-center">
+                <div className="text-white text-sm font-medium">
+                  🚀 Flying...
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Minimal Target Indicator - Subtle line across page */}
+          <div 
+            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/40 to-transparent z-10 pointer-events-none"
+            style={{ top: 'calc(50% - 300px)' }}
+          >
+            <div className="absolute left-1/2 -translate-x-1/2 -top-6">
+              <div className="bg-green-500/10 backdrop-blur-sm px-4 py-1 rounded-full border border-green-400/30">
+                <span className="text-green-300 text-xs font-semibold">🎯 TARGET</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Slingshot Base - Bottom Center */}
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 pointer-events-none">
+            <div className="relative">
+              {/* Base pole */}
+              <div className="w-6 h-40 bg-gradient-to-b from-gray-600 to-gray-800 rounded-t-xl border-2 border-gray-500/50 shadow-2xl mx-auto"></div>
+              
+              {/* Base platform */}
+              <div className="w-24 h-4 bg-gradient-to-b from-gray-700 to-gray-900 rounded-lg border-2 border-gray-600/50 -mt-1"></div>
+            </div>
+          </div>
+
+          {/* Elastic Bands - Only visible when pulling */}
+          {isDragging && (
+            <svg className="absolute inset-0 pointer-events-none" style={{ width: '100%', height: '100%' }}>
+              <defs>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                  <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+              <line
+                x1="calc(50% - 12px)"
+                y1="calc(100% - 155px)"
+                x2={`calc(50% + ${lanyardPosition.x}px)`}
+                y2={`calc(100% - 155px + ${lanyardPosition.y}px)`}
+                stroke="#fbbf24"
+                strokeWidth="4"
+                opacity="0.8"
+                filter="url(#glow)"
+              />
+              <line
+                x1="calc(50% + 12px)"
+                y1="calc(100% - 155px)"
+                x2={`calc(50% + ${lanyardPosition.x}px)`}
+                y2={`calc(100% - 155px + ${lanyardPosition.y}px)`}
+                stroke="#fbbf24"
+                strokeWidth="4"
+                opacity="0.8"
+                filter="url(#glow)"
+              />
+            </svg>
+          )}
+
+          {/* Premium Lanyard Card */}
+          <div
+            className={`absolute left-1/2 -translate-x-1/2 cursor-grab active:cursor-grabbing z-20 ${
+              gameWon ? 'pointer-events-none' : ''
+            }`}
+            style={{
+              bottom: `${155 - lanyardPosition.y}px`,
+              transform: `translate(-50%, 0) translateX(${lanyardPosition.x}px)`,
+              transition: isDragging ? 'none' : 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            }}
+            onMouseDown={handleLanyardMouseDown}
+            onTouchStart={handleLanyardTouchStart}
+          >
+            {/* Lanyard String with Glow */}
+            <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-0.5 h-16 bg-gradient-to-b from-gray-400 to-gray-600 shadow-lg"></div>
+            
+            {/* Hook/Ring */}
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-8 h-8 border-4 border-gray-500 rounded-full bg-gray-700 shadow-xl"></div>
+
+            {/* Premium Lanyard Badge */}
+            <div className={`relative group ${!isLaunched && !isDragging ? 'animate-swing' : ''}`}>
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-blue-500 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity"></div>
+              
+              {/* Main card */}
+              <div className={`relative bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600 w-32 h-44 rounded-2xl shadow-2xl border-4 ${
+                gameWon ? 'border-yellow-400 animate-bounce' : 'border-white/40'
+              } overflow-hidden transform group-hover:scale-105 transition-transform`}>
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent"></div>
+                
+                {/* Hole for string */}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-8 h-8 bg-gray-800 rounded-full border-4 border-gray-600 shadow-inner"></div>
+                
+                {/* Content */}
+                <div className="relative h-full flex flex-col items-center justify-center pt-6 px-3">
+                  {/* Logo area */}
+                  <div className="text-white font-bold text-sm mb-2 tracking-wider">DEXLABS</div>
+                  
+                  {/* Icon */}
+                  <div className="text-5xl mb-2 filter drop-shadow-lg">🎓</div>
+                  
+                  {/* Event info */}
+                  <div className="text-center">
+                    <div className="text-white font-bold text-xs mb-1">AI Workshop</div>
+                    <div className="text-white/80 text-[10px] font-medium">June 14, 2026</div>
+                  </div>
+                  
+                  {/* Badge number */}
+                  <div className="absolute bottom-3 right-3 bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded text-white text-[9px] font-mono">
+                    #{Math.floor(Math.random() * 1000)}
+                  </div>
+                </div>
+
+                {/* Decorative pattern */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-pink-400 to-cyan-400"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Win Celebration Overlay */}
+          {gameWon && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
+              <div className="pointer-events-auto bg-gradient-to-br from-yellow-400/95 via-orange-500/95 to-pink-500/95 backdrop-blur-xl p-10 rounded-3xl border-4 border-yellow-300 shadow-2xl text-center max-w-md animate-bounce-in">
+                <div className="text-7xl mb-4 animate-bounce">🏆</div>
+                <h3 className="text-4xl font-bold text-white mb-3 drop-shadow-lg">Amazing!</h3>
+                <p className="text-white text-xl font-semibold mb-4">You Won the Challenge!</p>
+                
+                <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 mb-6 border-2 border-white/30">
+                  <div className="text-white text-lg font-bold mb-1">🎁 Your Prize</div>
+                  <div className="text-white text-2xl font-bold">DexChapter FREE</div>
+                  <div className="text-white/90 text-sm">for 1 full week!</div>
+                </div>
+
+                <p className="text-white/90 text-sm mb-6">Check your email for the promo code 📧</p>
+                
+                <button
+                  onClick={closeGame}
+                  className="px-8 py-4 bg-white text-orange-600 font-bold text-lg rounded-xl hover:bg-orange-50 transition-all transform hover:scale-105 shadow-xl"
+                >
+                  Awesome! 🎉
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

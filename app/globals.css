@@ -452,3 +452,18 @@ body {
 .animate-float-tag {
   animation: float-tag ease-in-out infinite;
 }
+
+/* Lanyard Swing Animation */
+@keyframes swing {
+  0%, 100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+.animate-swing {
+  transform-origin: top center;
+  animation: swing 2s ease-in-out infinite;
+}
