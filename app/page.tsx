@@ -580,61 +580,122 @@ export default function Home() {
             onMouseDown={handleLanyardMouseDown}
             onTouchStart={handleLanyardTouchStart}
           >
-            {/* Lanyard Strap - Goes up from the badge */}
-            <div className="absolute -top-60 left-1/2 -translate-x-1/2 w-6 h-60 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-700 shadow-xl overflow-hidden">
-              {/* Strap texture/pattern */}
-              <div className="absolute inset-0 opacity-30">
-                <div className="h-1 bg-yellow-600 absolute top-8"></div>
-                <div className="h-1 bg-yellow-600 absolute top-16"></div>
-                <div className="h-1 bg-yellow-600 absolute top-24"></div>
-              </div>
+            {/* Premium Lanyard Strap - Black with branding */}
+            <div className="absolute -top-60 left-1/2 -translate-x-1/2 w-8 h-60 bg-gradient-to-b from-gray-900 via-black to-gray-900 shadow-2xl rounded-sm overflow-hidden">
+              {/* Strap shine/highlight */}
+              <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+              <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
               
-              {/* Strap shine */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+              {/* Branding text on strap */}
+              <div className="absolute inset-0 flex flex-col items-center justify-around py-2 text-[8px] font-bold text-yellow-400 opacity-70 tracking-widest" style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
+                <span>DEXLABS</span>
+                <span>•</span>
+                <span>AI</span>
+                <span>•</span>
+                <span>2026</span>
+              </div>
             </div>
 
-            {/* Metal Ring connecting strap to badge */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-8 border-4 border-gray-600 rounded-full bg-gradient-to-b from-gray-500 to-gray-700 shadow-xl"></div>
+            {/* Premium Metal Clip/Connector */}
+            <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+              <div className="relative w-14 h-10">
+                {/* Metal ring */}
+                <div className="absolute inset-0 border-[5px] border-gray-500 rounded-full bg-gradient-to-br from-gray-300 via-gray-400 to-gray-600 shadow-xl"></div>
+                {/* Inner shadow */}
+                <div className="absolute inset-2 border-2 border-gray-700/30 rounded-full"></div>
+                {/* Highlight */}
+                <div className="absolute top-1 left-2 w-3 h-3 bg-white/40 rounded-full blur-sm"></div>
+              </div>
+            </div>
 
             {/* Premium Lanyard Badge */}
             <div className={`relative group ${!isLaunched && !isDragging ? 'animate-swing' : ''}`}>
-              {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-300 rounded-2xl blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
+              {/* Outer glow */}
+              <div className="absolute -inset-4 bg-gradient-to-br from-violet-500/30 via-blue-500/30 to-purple-500/30 rounded-3xl blur-2xl"></div>
               
-              {/* Main card - Beige/cream color like the image */}
-              <div className={`relative bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 w-40 h-56 rounded-2xl shadow-2xl border-4 ${
-                gameWon ? 'border-yellow-400 animate-bounce' : 'border-amber-200'
-              } overflow-hidden transform group-hover:scale-105 transition-transform`}>
-                {/* Shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-transparent"></div>
+              {/* Main badge card */}
+              <div className={`relative w-48 h-64 rounded-2xl shadow-2xl overflow-hidden transform transition-all duration-300 ${
+                gameWon ? 'scale-110 rotate-2' : 'group-hover:scale-105'
+              }`}>
+                {/* Background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-600 to-blue-700"></div>
                 
-                {/* Top hole for ring */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-10 h-6 bg-gray-800 rounded-full border-4 border-gray-600 shadow-inner"></div>
+                {/* Animated gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/40 via-purple-500/40 to-pink-500/40 opacity-60 animate-gradient-shift"></div>
                 
-                {/* Content */}
-                <div className="relative h-full flex flex-col items-center justify-center pt-8 px-4">
-                  {/* Logo/Brand using DexLabs image or text */}
-                  <div className="mb-4 w-28 h-12 bg-gradient-to-r from-gray-300 to-gray-400 rounded-lg flex items-center justify-center shadow-lg">
-                    <span className="text-gray-700 font-bold text-xl tracking-wider">DEX</span>
+                {/* Top shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-transparent to-transparent"></div>
+                
+                {/* Diagonal shine stripe */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/10 rotate-45 blur-xl"></div>
+
+                {/* Border frame */}
+                <div className={`absolute inset-0 border-4 ${
+                  gameWon ? 'border-yellow-400 animate-pulse' : 'border-white/30'
+                } rounded-2xl`}></div>
+
+                {/* Top hole for clip */}
+                <div className="absolute top-5 left-1/2 -translate-x-1/2 w-12 h-8 bg-gradient-to-b from-gray-900 to-gray-800 rounded-full border-4 border-gray-700 shadow-2xl">
+                  <div className="absolute inset-1 bg-black/50 rounded-full"></div>
+                </div>
+
+                {/* Content Container */}
+                <div className="relative h-full flex flex-col items-center justify-between p-6 pt-16 pb-6">
+                  
+                  {/* Logo Section */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="relative">
+                      {/* DexLabs Logo background */}
+                      <div className="absolute -inset-2 bg-white/10 rounded-xl blur"></div>
+                      <div className="relative px-6 py-3 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg">
+                        <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 tracking-tight">
+                          DEXLABS
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  
-                  {/* Icon */}
-                  <div className="text-6xl mb-3 filter drop-shadow-lg">🎓</div>
-                  
-                  {/* Event info */}
-                  <div className="text-center">
-                    <div className="text-gray-800 font-bold text-sm mb-1">AI Workshop</div>
-                    <div className="text-gray-600 text-xs font-medium">June 14, 2026</div>
+
+                  {/* Icon/Image Section */}
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="relative">
+                      {/* Glow behind icon */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/50 to-orange-400/50 rounded-full blur-xl"></div>
+                      <div className="relative text-7xl filter drop-shadow-2xl">🎓</div>
+                    </div>
                   </div>
-                  
-                  {/* Badge number */}
-                  <div className="absolute bottom-4 right-4 bg-gray-800/80 backdrop-blur-sm px-2 py-1 rounded text-white text-[10px] font-mono">
-                    #{Math.floor(Math.random() * 1000).toString().padStart(3, '0')}
+
+                  {/* Event Info */}
+                  <div className="flex flex-col items-center gap-2 text-center">
+                    <div className="px-4 py-1.5 bg-white/20 backdrop-blur-md rounded-lg border border-white/30">
+                      <div className="text-white font-bold text-base tracking-wide">AI WORKSHOP</div>
+                    </div>
+                    <div className="text-white/90 text-sm font-semibold">June 14, 2026</div>
+                    <div className="flex items-center gap-2 text-xs text-white/70">
+                      <span>•</span>
+                      <span>Live Session</span>
+                      <span>•</span>
+                    </div>
+                  </div>
+
+                  {/* Badge number - bottom corner */}
+                  <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-black/60 backdrop-blur-sm rounded-lg border border-white/20">
+                    <div className="text-white/90 text-xs font-mono font-bold">
+                      #{String(Math.floor(Math.random() * 1000)).padStart(3, '0')}
+                    </div>
+                  </div>
+
+                  {/* QR Code placeholder - bottom left */}
+                  <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/95 rounded-lg p-1 shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-violet-600 to-blue-600 rounded opacity-80"></div>
                   </div>
                 </div>
 
-                {/* Decorative accent line at bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400"></div>
+                {/* Bottom accent stripe */}
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 shadow-lg"></div>
+                
+                {/* Corner decorations */}
+                <div className="absolute top-4 right-4 w-2 h-2 bg-white/40 rounded-full"></div>
+                <div className="absolute top-4 left-4 w-2 h-2 bg-white/40 rounded-full"></div>
               </div>
             </div>
           </div>
