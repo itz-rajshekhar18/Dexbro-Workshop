@@ -51,6 +51,7 @@ export default function Home() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [velocity, setVelocity] = useState(0);
   const [isLaunched, setIsLaunched] = useState(false);
+  const [showTrail, setShowTrail] = useState(false);
   const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
@@ -270,14 +271,15 @@ export default function Home() {
     
     // Calculate launch velocity based on pull distance
     const pullStrength = lanyardPosition.y;
-    const launchVelocity = pullStrength * 8; // Velocity multiplier
+    const launchVelocity = pullStrength * 10; // Increased velocity multiplier for better launch
     
     if (pullStrength > 10) {
       setIsLaunched(true);
+      setShowTrail(true);
       setVelocity(launchVelocity);
       animateLaunch(launchVelocity);
     } else {
-      // Reset if not pulled enough
+      // Snap back with elastic animation if not pulled enough
       setLanyardPosition({ x: 0, y: 0 });
     }
   };
@@ -285,42 +287,64 @@ export default function Home() {
   const animateLaunch = (initialVelocity: number) => {
     let currentVel = initialVelocity;
     let currentPos = 0;
-    const gravity = 5;
-    const targetHeight = 600; // pixels to reach upward
+    const gravity = 8; // Increased gravity for more realistic feel
+    const dampening = 0.7; // Bounce dampening factor
+    const targetHeight = 500; // pixels to reach upward
     let maxHeight = 0;
+    let bounceCount = 0;
+    const maxBounces = 2;
+    let lastTime = performance.now();
     
-    const animate = () => {
-      currentVel -= gravity;
-      currentPos += currentVel; // Going UP (positive adds to position)
+    const animate = (currentTime: number) => {
+      const deltaTime = (currentTime - lastTime) / 16.67; // Normalize to 60fps
+      lastTime = currentTime;
       
-      if (currentPos < 0) currentPos = 0;
+      // Apply gravity
+      currentVel -= gravity * deltaTime;
+      currentPos += currentVel * deltaTime;
       
-      maxHeight = Math.max(maxHeight, currentPos);
-      setLanyardPosition({ x: 0, y: -currentPos }); // Negative Y moves it UP on screen
+      // Track max height reached
+      if (currentPos > maxHeight) {
+        maxHeight = currentPos;
+      }
       
-      if (currentPos > 0 && currentVel > 0) {
-        requestAnimationFrame(animate);
-      } else {
-        // Launch ended - check if won
-        if (maxHeight >= targetHeight) {
-          setGameWon(true);
-          setTimeout(() => {
-            // Success sound or animation can be triggered here
-          }, 300);
+      // Bounce physics when hitting the starting position
+      if (currentPos <= 0) {
+        currentPos = 0;
+        
+        if (Math.abs(currentVel) > 5 && bounceCount < maxBounces) {
+          // Bounce back up with dampening
+          currentVel = -currentVel * dampening;
+          bounceCount++;
         } else {
+          // Stop bouncing - evaluate result
+          currentVel = 0;
+          setShowTrail(false);
+          
           setTimeout(() => {
-            // Close to winning
-            if (maxHeight >= targetHeight * 0.85) {
-              alert('So close! 🎯 Pull harder and try again!');
-            } else if (maxHeight >= targetHeight * 0.6) {
-              alert('Good try! 💪 You can do better!');
+            if (maxHeight >= targetHeight) {
+              setGameWon(true);
             } else {
-              alert('Pull the lanyard down more for extra power! 🚀');
+              // Encouraging feedback based on height
+              if (maxHeight >= targetHeight * 0.85) {
+                alert('🔥 SO CLOSE! Just a bit more power! Try again!');
+              } else if (maxHeight >= targetHeight * 0.6) {
+                alert('💪 Good attempt! Pull it down further for more power!');
+              } else {
+                alert('🚀 Pull the lanyard all the way down and release!');
+              }
+              resetGame();
             }
-            resetGame();
-          }, 500);
+          }, 300);
+          return;
         }
       }
+      
+      // Update position (negative Y moves up on screen)
+      setLanyardPosition({ x: 0, y: -currentPos });
+      
+      // Continue animation
+      requestAnimationFrame(animate);
     };
     
     requestAnimationFrame(animate);
@@ -328,6 +352,7 @@ export default function Home() {
 
   const resetGame = () => {
     setIsLaunched(false);
+    setShowTrail(false);
     setLanyardPosition({ x: 0, y: 0 });
     setVelocity(0);
   };
@@ -496,6 +521,23 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Power Meter when dragging */}
+            {isDragging && (
+              <div className="mb-3">
+                <div className="text-white text-xs mb-1 font-semibold">Power: {Math.round((lanyardPosition.y / 150) * 100)}%</div>
+                <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden border border-violet-500/30">
+                  <div 
+                    className={`h-full transition-all duration-100 ${
+                      lanyardPosition.y > 120 ? 'bg-gradient-to-r from-green-500 to-emerald-400' :
+                      lanyardPosition.y > 80 ? 'bg-gradient-to-r from-yellow-500 to-orange-400' :
+                      'bg-gradient-to-r from-red-500 to-pink-400'
+                    }`}
+                    style={{ width: `${(lanyardPosition.y / 150) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            )}
+
             {!isLaunched && !isDragging && (
               <div className="text-center">
                 <div className="text-cyan-300 text-sm font-medium animate-pulse mb-2">
@@ -511,20 +553,32 @@ export default function Home() {
 
             {isLaunched && !gameWon && (
               <div className="text-center">
-                <div className="text-white text-sm font-medium">
-                  🚀 Flying...
+                <div className="text-white text-sm font-medium flex items-center justify-center gap-2">
+                  <span className="animate-bounce">🚀</span>
+                  <span>Flying...</span>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Target Line - Invisible but marks the goal */}
+          {/* Motion Trail Effect when launching */}
+          {showTrail && (
+            <div 
+              className="absolute left-1/2 -translate-x-1/2 w-2 bg-gradient-to-b from-yellow-400 via-orange-400 to-transparent blur-sm opacity-70 pointer-events-none"
+              style={{
+                top: `${220 + lanyardPosition.y + 30}px`,
+                height: '80px'
+              }}
+            ></div>
+          )}
+
+          {/* Target Line - with pulse animation */}
           <div 
-            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/30 to-transparent z-10 pointer-events-none"
+            className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent z-10 pointer-events-none"
             style={{ top: '80px' }}
           >
             <div className="absolute left-1/2 -translate-x-1/2 -top-6">
-              <div className="bg-green-500/10 backdrop-blur-sm px-4 py-1 rounded-full border border-green-400/30">
+              <div className="bg-green-500/10 backdrop-blur-sm px-4 py-1 rounded-full border border-green-400/30 animate-pulse">
                 <span className="text-green-300 text-xs font-semibold">🎯 TARGET</span>
               </div>
             </div>
