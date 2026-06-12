@@ -169,7 +169,11 @@ export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise
       phone: orderData.notes?.phone || '',
       grade: orderData.notes?.grade || '',
       experience: orderData.notes?.experience || '',
-      interests: orderData.notes?.interests ? orderData.notes.interests.split(', ') : [],
+      interests: Array.isArray(orderData.notes?.interests) 
+        ? orderData.notes.interests 
+        : (typeof orderData.notes?.interests === 'string' 
+          ? orderData.notes.interests.split(', ') 
+          : []),
       message: orderData.notes?.message || ''
     };
     
