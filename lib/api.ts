@@ -146,20 +146,35 @@ export interface RazorpayOrderResponse {
   currency: string;
   receipt: string;
   status: string;
+  order_id?: string; // Backend order_id for verification
 }
 
 export interface PaymentVerificationData {
   razorpay_order_id: string;
   razorpay_payment_id: string;
   razorpay_signature: string;
-  registrationData: RegistrationData;
+  registrationData?: RegistrationData;
+  order_id?: string; // Backend order_id
 }
 
 // Create Razorpay order
 export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise<ApiResponse<RazorpayOrderResponse>> {
   try {
     console.log('Sending order data to backend:', orderData);
-    const bodyString = JSON.stringify(orderData);
+    
+    // Transform the data to match backend expectations
+    const registrationPayload = {
+      name: orderData.notes?.name || '',
+      email: orderData.notes?.email || '',
+      phone: orderData.notes?.phone || '',
+      grade: orderData.notes?.grade || '',
+      experience: orderData.notes?.experience || '',
+      interests: orderData.notes?.interests ? orderData.notes.interests.split(', ') : [],
+      message: orderData.notes?.message || ''
+    };
+    
+    console.log('Transformed payload for backend:', registrationPayload);
+    const bodyString = JSON.stringify(registrationPayload);
     console.log('Stringified body:', bodyString);
     
     const response = await fetch(`${PAYMENT_API_URL}/create-order`, {
@@ -170,12 +185,31 @@ export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise
       body: bodyString,
     });
 
+    const responseData = await response.json();
+    console.log('Backend response:', responseData);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create order');
+      throw new Error(responseData.message || 'Failed to create order');
     }
 
-    return await response.json();
+    // Transform backend response to match expected format
+    if (responseData.success && responseData.data) {
+      return {
+        success: true,
+        message: responseData.message,
+        data: {
+          id: responseData.data.razorpay_order_id,
+          entity: 'order',
+          amount: responseData.data.amount,
+          currency: responseData.data.currency,
+          receipt: responseData.data.order_id,
+          status: 'created',
+          order_id: responseData.data.order_id // Store backend order_id for verification
+        }
+      };
+    }
+
+    return responseData;
   } catch (error) {
     console.error('Create Order Error:', error);
     throw error;
@@ -186,7 +220,16 @@ export async function createRazorpayOrder(orderData: RazorpayOrderData): Promise
 export async function verifyRazorpayPayment(paymentData: PaymentVerificationData): Promise<ApiResponse<Registration>> {
   try {
     console.log('Verify payment - Original data:', paymentData);
-    const bodyString = JSON.stringify(paymentData);
+    
+    // Transform to match backend expectations
+    const verificationPayload = {
+      order_id: paymentData.order_id || paymentData.razorpay_order_id, // Use stored order_id
+      razorpay_order_id: paymentData.razorpay_order_id,
+      razorpay_payment_id: paymentData.razorpay_payment_id,
+      razorpay_signature: paymentData.razorpay_signature
+    };
+    
+    const bodyString = JSON.stringify(verificationPayload);
     console.log('Verify payment - Stringified body:', bodyString);
     
     const response = await fetch(`${PAYMENT_API_URL}/verify`, {
@@ -197,12 +240,14 @@ export async function verifyRazorpayPayment(paymentData: PaymentVerificationData
       body: bodyString,
     });
 
+    const responseData = await response.json();
+    console.log('Verification response:', responseData);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Payment verification failed');
+      throw new Error(responseData.message || 'Payment verification failed');
     }
 
-    return await response.json();
+    return responseData;
   } catch (error) {
     console.error('Payment Verification Error:', error);
     throw error;

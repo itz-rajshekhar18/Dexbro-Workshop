@@ -136,6 +136,7 @@ export default function Home() {
             };
             
             console.log('Verifying payment with data:', {
+              order_id: order.order_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -143,6 +144,7 @@ export default function Home() {
             });
             
             const verifyResponse = await verifyRazorpayPayment({
+              order_id: order.order_id, // Pass the backend order_id
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
