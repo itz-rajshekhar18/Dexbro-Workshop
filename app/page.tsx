@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, FormEvent, useEffect, useRef } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import Image from 'next/image';
 import { 
   Calendar, Clock, Timer, Monitor, User, Mail, Phone, GraduationCap,
-  Code, Brain, MessageSquare, Eye, Database, Bot, Scale, Rocket,
-  BookOpen, Award, Globe, Users, TrendingUp, Briefcase, Sparkles,
-  CheckCircle2
+  Code, Brain, MessageSquare, Rocket, Bot,
+  Award, Globe, Users, TrendingUp, Briefcase, Sparkles
 } from 'lucide-react';
 import { createRazorpayOrder, verifyRazorpayPayment, type RegistrationData } from '@/lib/api';
 
@@ -39,7 +38,7 @@ function useScrollAnimation() {
 }
 
 export default function Home() {
-  useScrollAnimation(); // Initialize scroll animations
+  useScrollAnimation();
   
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,7 +53,6 @@ export default function Home() {
     message: ''
   });
 
-  // Load Razorpay script
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement('script');
@@ -70,56 +68,34 @@ export default function Home() {
     setIsSubmitting(true);
 
     try {
-      console.log('Starting payment flow...');
-      
-      // Load Razorpay script
       const scriptLoaded = await loadRazorpayScript();
-      console.log('Razorpay script loaded:', scriptLoaded);
-      
       if (!scriptLoaded) {
         alert('Failed to load payment gateway. Please check your internet connection.');
         setIsSubmitting(false);
         return;
       }
 
-      console.log('Creating order with backend...');
-      console.log('Order data:', {
+      const orderResponse = await createRazorpayOrder({
         amount: 75000,
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
         notes: formData
       });
-      
-      // Create Razorpay order
-      const orderResponse = await createRazorpayOrder({
-        amount: 75000, // ₹750 in paise (750 * 100)
-        currency: 'INR',
-        receipt: `receipt_${Date.now()}`,
-        notes: formData
-      });
-
-      console.log('Order response:', orderResponse);
 
       if (!orderResponse.success || !orderResponse.data) {
-        alert('Failed to create order. Please try again. Check console for details.');
-        console.error('Order creation failed:', orderResponse);
+        alert('Failed to create order. Please try again.');
         setIsSubmitting(false);
         return;
       }
 
       const order = orderResponse.data;
 
-      // Check if Razorpay key is configured
       if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
         alert('Razorpay is not configured. Please contact support.');
-        console.error('NEXT_PUBLIC_RAZORPAY_KEY_ID is missing');
         setIsSubmitting(false);
         return;
       }
 
-      console.log('Opening Razorpay payment modal...');
-
-      // Razorpay payment options
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: order.amount,
@@ -134,17 +110,9 @@ export default function Home() {
               ...formData,
               interests: formData.interests.join(', ')
             };
-            
-            console.log('Verifying payment with data:', {
-              order_id: order.order_id,
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              registrationData: registrationDataForBackend
-            });
-            
+
             const verifyResponse = await verifyRazorpayPayment({
-              order_id: order.order_id, // Pass the backend order_id
+              order_id: order.order_id,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -168,14 +136,15 @@ export default function Home() {
                   experience: '',
                   message: ''
                 });
+                setIsSubmitting(false);
               }, 1000);
             } else {
               alert('Payment successful but registration failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
+              setIsSubmitting(false);
             }
           } catch (error) {
             console.error('Verification error:', error);
             alert('Payment successful but verification failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
-          } finally {
             setIsSubmitting(false);
           }
         },
@@ -200,7 +169,6 @@ export default function Home() {
         }
       };
 
-      // Open Razorpay payment modal
       const razorpay = new window.Razorpay(options);
       razorpay.open();
 
@@ -220,7 +188,6 @@ export default function Home() {
     }));
   };
 
-  // Only render animations on client side
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -305,7 +272,6 @@ export default function Home() {
             <span className="text-white font-semibold">📚 Access to premium AI tools</span>
             <span className="text-white/80">•</span>
           </div>
-          {/* Duplicate for seamless loop */}
           <div className="flex items-center gap-8 px-8">
             <span className="text-white font-semibold">✨ Learn AI with hands-on projects</span>
             <span className="text-white/80">•</span>
@@ -322,24 +288,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* Confetti */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-3 h-3 animate-confetti rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                backgroundColor: ['#3b82f6', '#8b5cf6', '#06b6d4'][Math.floor(Math.random() * 3)],
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${Math.random() * 2 + 2}s`
-              }}
-            />
-          ))}
-        </div>
-      )}
 
       <div className="max-w-6xl mx-auto relative z-10">
         {/* Header with Logo */}
@@ -412,7 +360,6 @@ export default function Home() {
           <p className="text-center text-gray-400 mb-8">Fill in your details to secure your spot</p>
 
           <form onSubmit={handleSubmit} className="space-y-5" suppressHydrationWarning>
-            {/* Name */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                 <User size={16} />
@@ -428,7 +375,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Email */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                 <Mail size={16} />
@@ -444,7 +390,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Phone */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                 <Phone size={16} />
@@ -461,7 +406,6 @@ export default function Home() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-5">
-              {/* Grade */}
               <div>
                 <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                   <GraduationCap size={16} />
@@ -484,7 +428,6 @@ export default function Home() {
                 </select>
               </div>
 
-              {/* AI Experience */}
               <div>
                 <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                   <Code size={16} />
@@ -505,7 +448,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Interests */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-3">
                 <Brain size={16} />
@@ -539,7 +481,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Message */}
             <div>
               <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-2">
                 <MessageSquare size={16} />
@@ -554,7 +495,6 @@ export default function Home() {
               />
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -574,27 +514,19 @@ export default function Home() {
           </h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            {/* Neural Network Animation */}
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-violet-500 transition-all group">
               <h3 className="text-xl font-bold text-violet-300 mb-4 text-center">Neural Networks</h3>
               <div className="flex justify-center items-center h-48">
                 <svg width="200" height="180" viewBox="0 0 200 180" className="overflow-visible">
-                  {/* Input Layer */}
                   <circle cx="30" cy="40" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0s'}} />
                   <circle cx="30" cy="90" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0.2s'}} />
                   <circle cx="30" cy="140" r="8" fill="#3b82f6" className="animate-pulse-node" style={{animationDelay: '0.4s'}} />
-                  
-                  {/* Hidden Layer */}
                   <circle cx="100" cy="30" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '0.6s'}} />
                   <circle cx="100" cy="70" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '0.8s'}} />
                   <circle cx="100" cy="110" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '1s'}} />
                   <circle cx="100" cy="150" r="8" fill="#8b5cf6" className="animate-pulse-node" style={{animationDelay: '1.2s'}} />
-                  
-                  {/* Output Layer */}
                   <circle cx="170" cy="60" r="8" fill="#06b6d4" className="animate-pulse-node" style={{animationDelay: '1.4s'}} />
                   <circle cx="170" cy="120" r="8" fill="#06b6d4" className="animate-pulse-node" style={{animationDelay: '1.6s'}} />
-                  
-                  {/* Connections with animated flow */}
                   <line x1="38" y1="40" x2="92" y2="30" stroke="#3b82f6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" />
                   <line x1="38" y1="90" x2="92" y2="70" stroke="#3b82f6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" style={{animationDelay: '0.5s'}} />
                   <line x1="108" y1="30" x2="162" y2="60" stroke="#8b5cf6" strokeWidth="1.5" opacity="0.3" className="animate-data-flow" strokeDasharray="4" style={{animationDelay: '1s'}} />
@@ -604,7 +536,6 @@ export default function Home() {
               <p className="text-gray-400 text-sm text-center mt-4">Learn how neural networks process information layer by layer</p>
             </div>
 
-            {/* NLP Animation */}
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 transition-all group">
               <h3 className="text-xl font-bold text-blue-300 mb-4 text-center">Natural Language Processing</h3>
               <div className="flex justify-center items-center h-48 flex-col gap-3">
@@ -631,12 +562,10 @@ export default function Home() {
               <p className="text-gray-400 text-sm text-center mt-4">Understand how AI processes and generates human language</p>
             </div>
 
-            {/* Machine Learning Animation */}
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700 hover:border-cyan-500 transition-all group">
               <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center">Machine Learning</h3>
               <div className="flex justify-center items-center h-48">
                 <svg width="200" height="180" viewBox="0 0 200 180">
-                  {/* Data points */}
                   <g className="animate-pulse-node">
                     <circle cx="40" cy="140" r="4" fill="#3b82f6" />
                     <circle cx="60" cy="120" r="4" fill="#3b82f6" />
@@ -645,16 +574,7 @@ export default function Home() {
                     <circle cx="120" cy="60" r="4" fill="#3b82f6" />
                     <circle cx="140" cy="40" r="4" fill="#3b82f6" />
                   </g>
-                  {/* Learning curve */}
-                  <path
-                    d="M 40 140 Q 100 80 160 40"
-                    stroke="#06b6d4"
-                    strokeWidth="3"
-                    fill="none"
-                    className="animate-data-flow"
-                    strokeDasharray="4"
-                  />
-                  {/* Prediction arrow */}
+                  <path d="M 40 140 Q 100 80 160 40" stroke="#06b6d4" strokeWidth="3" fill="none" className="animate-data-flow" strokeDasharray="4" />
                   <g className="animate-bounce-slow">
                     <line x1="160" y1="40" x2="180" y2="30" stroke="#10b981" strokeWidth="2" />
                     <polygon points="180,30 175,35 185,35" fill="#10b981" />
@@ -729,7 +649,6 @@ export default function Home() {
             <h3 className="text-2xl font-bold text-white mb-2">Common Student Struggles</h3>
             <p className="text-gray-400">Understand what to improve next</p>
           </div>
-          
           <div className="flex flex-wrap gap-3 justify-center items-center">
             {[
               { text: 'Missed homework', color: 'bg-pink-600/20 text-pink-300 border-pink-600/30' },
@@ -750,9 +669,7 @@ export default function Home() {
               <div
                 key={index}
                 className={`${problem.color} px-4 py-2 rounded-full border text-sm font-medium hover:scale-105 transition-transform cursor-default shadow-lg`}
-                style={{
-                  animationDelay: `${index * 0.1}s`
-                }}
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {problem.text}
               </div>
@@ -762,11 +679,8 @@ export default function Home() {
 
         {/* Student Problems - Floating Tags */}
         <div className="bg-gradient-to-br from-gray-900/60 to-gray-800/60 backdrop-blur-md rounded-3xl p-8 mt-8 shadow-2xl border border-gray-700/50 scroll-animate overflow-hidden relative">
-          <h2 className="text-3xl font-bold text-center mb-4 text-white">
-            Common Student Struggles
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-4 text-white">Common Student Struggles</h2>
           <p className="text-gray-400 text-center mb-8">Problems students face every day that DexBro helps solve</p>
-          
           <div className="relative h-32 flex flex-wrap gap-3 items-center justify-center">
             {[
               { text: 'Missed homework', color: 'bg-pink-500/20 text-pink-300 border-pink-500/30' },
@@ -787,16 +701,12 @@ export default function Home() {
               <div
                 key={index}
                 className={`px-4 py-2 rounded-full border ${problem.color} text-sm font-medium whitespace-nowrap animate-float-tag`}
-                style={{
-                  animationDelay: `${index * 0.2}s`,
-                  animationDuration: `${3 + (index % 3)}s`
-                }}
+                style={{ animationDelay: `${index * 0.2}s`, animationDuration: `${3 + (index % 3)}s` }}
               >
                 {problem.text}
               </div>
             ))}
           </div>
-          
           <div className="text-center mt-6">
             <p className="text-violet-400 font-semibold text-lg">✨ DexBro organizes everything in one smart dashboard</p>
           </div>
@@ -808,12 +718,8 @@ export default function Home() {
             <div className="inline-block bg-violet-600/20 px-6 py-2 rounded-full border border-violet-500/30 mb-4">
               <span className="text-violet-300 font-semibold">Study Transformation</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              How DexBro Redefines Student Life
-            </h2>
-            <p className="text-gray-400 text-lg">
-              A side-by-side comparison of scattered student routines versus a single smart study dashboard
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">How DexBro Redefines Student Life</h2>
+            <p className="text-gray-400 text-lg">A side-by-side comparison of scattered student routines versus a single smart study dashboard</p>
           </div>
 
           <div className="overflow-x-auto">
@@ -827,66 +733,16 @@ export default function Home() {
               </thead>
               <tbody className="divide-y divide-gray-800">
                 {[
-                  {
-                    feature: 'Student Setup',
-                    icon: '📚',
-                    scattered: 'Profiles, class details, subjects, interests, and goals live in separate notebooks or apps',
-                    withDexbro: 'Student onboarding captures profile, class, section, subjects, interests, and academic goals'
-                  },
-                  {
-                    feature: 'Daily Planning',
-                    icon: '📅',
-                    scattered: 'Checking group messages, diaries, and calendars to remember classes, tests, and events',
-                    withDexbro: 'Personal timetable shows daily and weekly schedules, exam dates, timings, and upcoming events'
-                  },
-                  {
-                    feature: 'Attendance Tracking',
-                    icon: '✅',
-                    scattered: 'Waiting for school updates and guessing whether attendance is still in a safe range',
-                    withDexbro: 'Attendance records, absence reports, trends, percentages, and downloadable reports stay visible'
-                  },
-                  {
-                    feature: 'Progress Analytics',
-                    icon: '📊',
-                    scattered: 'Marks, homework completion, strengths, and weak areas are hard to connect manually',
-                    withDexbro: 'Student analytics reveal performance, attendance, homework progress, strengths, and weaknesses'
-                  },
-                  {
-                    feature: 'AI Learning Tools',
-                    icon: '🤖',
-                    scattered: 'Waiting until the next class or searching random videos when a concept is unclear',
-                    withDexbro: 'AI support helps with doubts, explanations, personalized plans, quizzes, and career guidance'
-                  },
-                  {
-                    feature: 'Homework System',
-                    icon: '📝',
-                    scattered: 'Assignments get buried in chats, photos, notebooks, and last-minute reminders',
-                    withDexbro: 'View tasks, submit work, track deadlines, receive feedback, and get AI-assisted study support'
-                  },
-                  {
-                    feature: 'Exam Center',
-                    icon: '📖',
-                    scattered: 'Practice papers and mock test analysis are disconnected from revision planning',
-                    withDexbro: 'Mock tests, practice papers, rankings, performance analysis, and improvement suggestions align'
-                  },
-                  {
-                    feature: 'Collaboration',
-                    icon: '💬',
-                    scattered: 'Study groups, announcements, school updates, and resources get scattered across chats',
-                    withDexbro: 'Community spaces support discussions, study groups, resource sharing, messaging, and updates'
-                  },
-                  {
-                    feature: 'Reminders',
-                    icon: '🔔',
-                    scattered: 'Deadlines depend on memory, sticky notes, and repeated messages from classmates',
-                    withDexbro: 'Tasks, reminders, streaks, focus sessions, and achievement tracking keep study momentum clear'
-                  },
-                  {
-                    feature: 'Anytime Access',
-                    icon: '📱',
-                    scattered: 'Notes and school data stay split across devices, notebooks, and offline files',
-                    withDexbro: 'DexBro keeps the student dashboard available for planning, learning, and progress review'
-                  }
+                  { feature: 'Student Setup', icon: '📚', scattered: 'Profiles, class details, subjects, interests, and goals live in separate notebooks or apps', withDexbro: 'Student onboarding captures profile, class, section, subjects, interests, and academic goals' },
+                  { feature: 'Daily Planning', icon: '📅', scattered: 'Checking group messages, diaries, and calendars to remember classes, tests, and events', withDexbro: 'Personal timetable shows daily and weekly schedules, exam dates, timings, and upcoming events' },
+                  { feature: 'Attendance Tracking', icon: '✅', scattered: 'Waiting for school updates and guessing whether attendance is still in a safe range', withDexbro: 'Attendance records, absence reports, trends, percentages, and downloadable reports stay visible' },
+                  { feature: 'Progress Analytics', icon: '📊', scattered: 'Marks, homework completion, strengths, and weak areas are hard to connect manually', withDexbro: 'Student analytics reveal performance, attendance, homework progress, strengths, and weaknesses' },
+                  { feature: 'AI Learning Tools', icon: '🤖', scattered: 'Waiting until the next class or searching random videos when a concept is unclear', withDexbro: 'AI support helps with doubts, explanations, personalized plans, quizzes, and career guidance' },
+                  { feature: 'Homework System', icon: '📝', scattered: 'Assignments get buried in chats, photos, notebooks, and last-minute reminders', withDexbro: 'View tasks, submit work, track deadlines, receive feedback, and get AI-assisted study support' },
+                  { feature: 'Exam Center', icon: '📖', scattered: 'Practice papers and mock test analysis are disconnected from revision planning', withDexbro: 'Mock tests, practice papers, rankings, performance analysis, and improvement suggestions align' },
+                  { feature: 'Collaboration', icon: '💬', scattered: 'Study groups, announcements, school updates, and resources get scattered across chats', withDexbro: 'Community spaces support discussions, study groups, resource sharing, messaging, and updates' },
+                  { feature: 'Reminders', icon: '🔔', scattered: 'Deadlines depend on memory, sticky notes, and repeated messages from classmates', withDexbro: 'Tasks, reminders, streaks, focus sessions, and achievement tracking keep study momentum clear' },
+                  { feature: 'Anytime Access', icon: '📱', scattered: 'Notes and school data stay split across devices, notebooks, and offline files', withDexbro: 'DexBro keeps the student dashboard available for planning, learning, and progress review' }
                 ].map((row, index) => (
                   <tr key={index} className="hover:bg-gray-800/50 transition-colors">
                     <td className="p-4">
@@ -914,7 +770,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Footer with DexBro Image */}
+        {/* Footer */}
         <div className="mt-12 text-center">
           <div className="flex justify-center mb-4">
             <div className="relative p-4">
@@ -925,16 +781,11 @@ export default function Home() {
                 width={150}
                 height={150}
                 className="relative"
-                style={{ 
-                  mixBlendMode: 'lighten',
-                  filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.6))'
-                }}
+                style={{ mixBlendMode: 'lighten', filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.6))' }}
               />
             </div>
           </div>
-          <p className="text-gray-400 text-sm">
-            © 2026 DexLabs. All rights reserved.
-          </p>
+          <p className="text-gray-400 text-sm">© 2026 DexLabs. All rights reserved.</p>
         </div>
       </div>
     </div>
