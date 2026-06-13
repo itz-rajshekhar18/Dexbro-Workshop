@@ -57,15 +57,8 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
 
     function drawBg() {
       if (!ctx) return;
-      // deep dark overlay
-      ctx.fillStyle = 'rgba(5, 3, 20, 0.97)';
-      ctx.fillRect(0, 0, W, H);
-      // subtle radial glow behind lanyard
-      const glow = ctx.createRadialGradient(ANCHOR_X, 0, 0, ANCHOR_X, H * 0.4, 220);
-      glow.addColorStop(0, 'rgba(240,180,0,0.07)');
-      glow.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, W, H);
+      // Transparent background so we can see through
+      ctx.clearRect(0, 0, W, H);
     }
 
     function drawStrap(fromY: number, toY: number) {
@@ -346,7 +339,10 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
       </div>
 
       {/* top pin point */}
-      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-xl mb-0 z-10 border-2 border-gray-400" />
+      <div className="relative flex flex-col items-center">
+        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-xl mb-2 z-10 border-2 border-gray-400" />
+        <div className="text-gray-400 text-xs mb-2">Your Digital Badge</div>
+      </div>
 
       <canvas
         ref={canvasRef}
