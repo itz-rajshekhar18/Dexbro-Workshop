@@ -326,11 +326,27 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
   }, [participantName]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-      style={{ background: 'rgba(5,3,20,0.97)' }}>
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gradient-to-br from-blue-950/95 via-violet-950/95 to-black/95 backdrop-blur-sm">
+      
+      {/* Success Message Header */}
+      <div className="absolute top-20 text-center animate-fade-in-up">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-400 flex items-center justify-center animate-bounce">
+            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        </div>
+        <h2 className="text-4xl font-bold text-white mb-2 animate-gradient-text bg-gradient-to-r from-green-400 via-blue-400 to-violet-400 bg-clip-text">
+          Registration Successful!
+        </h2>
+        <p className="text-gray-300 text-lg">
+          Welcome to the AI & Machine Learning Workshop
+        </p>
+      </div>
 
       {/* top pin point */}
-      <div className="w-3 h-3 rounded-full bg-gray-600 shadow-lg mb-0 z-10" />
+      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-xl mb-0 z-10 border-2 border-gray-400" />
 
       <canvas
         ref={canvasRef}
@@ -344,29 +360,42 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
         style={{
           opacity: showDetails ? 1 : 0,
           transform: showDetails ? 'translateY(0)' : 'translateY(16px)',
-          marginTop: '-32px'
+          marginTop: '-20px'
         }}
       >
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <span className="text-green-400 text-xl">✓</span>
-          <p className="text-white font-semibold text-lg">Registration Confirmed!</p>
+        <div className="bg-gradient-to-br from-violet-900/60 to-blue-900/60 backdrop-blur-xl rounded-2xl p-6 border border-violet-500/30 shadow-2xl max-w-md">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="text-green-400 text-2xl">✓</span>
+            <p className="text-white font-bold text-xl">Payment Confirmed</p>
+          </div>
+          
+          <div className="space-y-3 mb-6">
+            <div className="bg-black/30 rounded-lg p-3 border border-violet-500/20">
+              <p className="text-gray-400 text-xs mb-1">Workshop Details</p>
+              <p className="text-white text-sm font-medium">Check your email for Zoom link & materials</p>
+            </div>
+            
+            <div className="bg-black/30 rounded-lg p-3 border border-green-500/20">
+              <p className="text-gray-400 text-xs mb-1">Payment ID</p>
+              <p className="text-green-400 text-xs font-mono">{paymentId}</p>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-600/20 to-violet-600/20 rounded-lg p-3 border border-blue-500/30">
+              <p className="text-blue-300 text-sm font-medium">🎓 See you on June 14, 2026!</p>
+            </div>
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full px-8 py-3 rounded-xl text-base font-semibold text-white transition-all transform hover:scale-105 shadow-xl"
+            style={{
+              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+              boxShadow: '0 0 24px rgba(139, 92, 246, 0.4)'
+            }}
+          >
+            Continue to Workshop Page
+          </button>
         </div>
-        <p className="text-gray-400 text-sm mb-1">
-          Workshop details sent to your email
-        </p>
-        <p className="text-gray-600 text-xs mb-6">
-          Payment ID: {paymentId}
-        </p>
-        <button
-          onClick={onClose}
-          className="px-8 py-2.5 rounded-full text-sm font-medium text-white"
-          style={{
-            background: 'linear-gradient(135deg, #f0b800, #c88000)',
-            boxShadow: '0 0 24px rgba(240,180,0,0.35)'
-          }}
-        >
-          Go to Dashboard
-        </button>
       </div>
     </div>
   );
