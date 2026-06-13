@@ -8,6 +8,7 @@ import {
   Award, Globe, Users, TrendingUp, Briefcase, Sparkles
 } from 'lucide-react';
 import { createRazorpayOrder, verifyRazorpayPayment, type RegistrationData } from '@/lib/api';
+import LanyardSuccessModal from '@/components/LanyardSuccessModal';
 
 // Declare Razorpay for TypeScript
 declare global {
@@ -43,6 +44,8 @@ export default function Home() {
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showLanyard, setShowLanyard] = useState(false);
+  const [successData, setSuccessData] = useState<{ name: string; paymentId: string } | null>(null);
   const [formData, setFormData] = useState<RegistrationData>({
     name: '',
     email: '',
@@ -120,24 +123,25 @@ export default function Home() {
             });
 
             if (verifyResponse.success) {
-              setShowConfetti(true);
-              
-              setTimeout(() => {
-                alert('🎉 Registration & Payment Successful!\n\nPayment ID: ' + response.razorpay_payment_id + '\n\nWelcome to the AI Workshop!\nCheck your email for workshop details and Zoom link.');
-                setShowConfetti(false);
-                
-                // Reset form
-                setFormData({
-                  name: '',
-                  email: '',
-                  phone: '',
-                  grade: '',
-                  interests: [],
-                  experience: '',
-                  message: ''
-                });
-                setIsSubmitting(false);
-              }, 1000);
+              // Use name from backend response if returned, else use what user typed
+              const confirmedName = (verifyResponse.data as any)?.name || formData.name;
+
+              setSuccessData({
+                name: confirmedName,
+                paymentId: response.razorpay_payment_id
+              });
+              setShowLanyard(true);
+
+              // Reset form in the background
+              setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                grade: '',
+                interests: [],
+                experience: '',
+                message: ''
+              });
             } else {
               alert('Payment successful but registration failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
               setIsSubmitting(false);
@@ -194,6 +198,20 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-950 via-violet-950 to-black p-5 overflow-x-hidden relative" suppressHydrationWarning>
+
+      {/* Lanyard Success Modal */}
+      {showLanyard && successData && (
+        <LanyardSuccessModal
+          participantName={successData.name}
+          paymentId={successData.paymentId}
+          onClose={() => {
+            setShowLanyard(false);
+            setSuccessData(null);
+            setIsSubmitting(false);
+          }}
+        />
+      )}
+
       {/* Rotating Hex Grid Background */}
       <div className="hex-background"></div>
       
