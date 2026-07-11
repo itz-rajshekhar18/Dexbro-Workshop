@@ -330,7 +330,13 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
             </svg>
           </div>
         </div>
-        <h2 className="text-4xl font-bold text-white mb-2 animate-gradient-text bg-gradient-to-r from-green-400 via-blue-400 to-violet-400 bg-clip-text">
+        <h2 className="text-5xl font-bold mb-2" style={{
+          background: 'linear-gradient(90deg, #4ade80, #3b82f6, #8b5cf6)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundSize: '200% 200%',
+          animation: 'gradient-text 3s ease infinite'
+        }}>
           Registration Successful!
         </h2>
         <p className="text-gray-300 text-lg">
@@ -339,15 +345,15 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
       </div>
 
       {/* top pin point */}
-      <div className="relative flex flex-col items-center">
-        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-gray-500 to-gray-700 shadow-xl mb-2 z-10 border-2 border-gray-400" />
-        <div className="text-gray-400 text-xs mb-2">Your Digital Badge</div>
+      <div className="relative flex flex-col items-center mt-32">
+        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-gray-400 via-gray-600 to-gray-800 shadow-2xl mb-1 z-10 border-2 border-gray-300" />
+        <div className="text-gray-300 text-sm font-semibold mb-2">Your Digital Badge</div>
       </div>
 
       <canvas
         ref={canvasRef}
-        className="block"
-        style={{ touchAction: 'none' }}
+        className="block drop-shadow-2xl"
+        style={{ touchAction: 'none', filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.5))' }}
       />
 
       {/* success details — fade in after lanyard settles */}
@@ -368,7 +374,7 @@ export default function LanyardSuccessModal({ participantName, paymentId, onClos
           <div className="space-y-3 mb-6">
             <div className="bg-black/30 rounded-lg p-3 border border-violet-500/20">
               <p className="text-gray-400 text-xs mb-1">Workshop Details</p>
-              <p className="text-white text-sm font-medium">Check your email for Zoom link & materials</p>
+              <p className="text-white text-sm font-medium">Check your email for venue details & materials</p>
             </div>
             
             <div className="bg-black/30 rounded-lg p-3 border border-green-500/20">

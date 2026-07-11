@@ -53,8 +53,21 @@ export default function Home() {
     grade: '',
     interests: [],
     experience: '',
-    message: ''
+    message: '',
+    workshopSpot: ''
   });
+
+  // Workshop spot pricing for DexBro
+  const workshopSpots = [
+    { id: 'dexlabs', label: 'In Dexlabs AI Skill Centre', price: 1500 },
+    { id: 'school', label: 'In School', price: 1000 },
+    { id: 'phoenix', label: 'In Phoenix Palasios, PVR Inox Cinema', price: 2000 }
+  ];
+
+  const getWorkshopPrice = () => {
+    const spot = workshopSpots.find(s => s.id === formData.workshopSpot);
+    return spot ? spot.price : 0;
+  };
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -79,7 +92,7 @@ export default function Home() {
       }
 
       const orderResponse = await createRazorpayOrder({
-        amount: 75000,
+        amount: getWorkshopPrice() * 100,
         currency: 'INR',
         receipt: `receipt_${Date.now()}`,
         notes: formData
@@ -140,7 +153,8 @@ export default function Home() {
                 grade: '',
                 interests: [],
                 experience: '',
-                message: ''
+                message: '',
+                workshopSpot: ''
               });
             } else {
               alert('Payment successful but registration failed. Please contact support with Payment ID: ' + response.razorpay_payment_id);
@@ -347,7 +361,7 @@ export default function Home() {
               { icon: Calendar, label: 'Date', value: 'June 14, 2026' },
               { icon: Clock, label: 'Time', value: '11:00 AM - 2:00 PM' },
               { icon: Timer, label: 'Duration', value: '3+ Hours' },
-              { icon: Monitor, label: 'Platform', value: 'Zoom' }
+              { icon: Monitor, label: 'Platform', value: 'Offline' }
             ].map((item, i) => {
               const Icon = item.icon;
               return (
@@ -363,10 +377,43 @@ export default function Home() {
             })}
           </div>
 
-          <div className="text-center bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-            <div className="text-gray-400 line-through text-xl mb-2">₹1487</div>
-            <div className="text-green-400 text-5xl font-bold my-2">₹750</div>
-            <div className="text-gray-300 text-sm">Early Bird Special - Limited Seats Available</div>
+          {/* Workshop Spot Selector */}
+          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+            <label className="flex items-center gap-2 text-gray-300 text-sm font-medium mb-4">
+              <Sparkles size={16} />
+              Choose Your Workshop Spot
+            </label>
+            <div className="space-y-3">
+              {workshopSpots.map((spot) => (
+                <label
+                  key={spot.id}
+                  className={`flex items-center justify-between p-4 rounded-lg border cursor-pointer transition-all ${
+                    formData.workshopSpot === spot.id
+                      ? 'border-violet-500 bg-violet-600/20'
+                      : 'border-gray-600 bg-gray-700/30 hover:border-gray-500'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="radio"
+                      name="workshopSpot"
+                      value={spot.id}
+                      checked={formData.workshopSpot === spot.id}
+                      onChange={(e) => setFormData({ ...formData, workshopSpot: e.target.value })}
+                      className="w-4 h-4 accent-violet-500"
+                    />
+                    <span className="text-white text-sm">{spot.label}</span>
+                  </div>
+                  <span className="text-violet-400 font-bold">₹{spot.price}/-</span>
+                </label>
+              ))}
+            </div>
+            {formData.workshopSpot && (
+              <div className="mt-4 text-center">
+                <span className="text-gray-400 text-sm">Selected: </span>
+                <span className="text-green-400 font-bold text-lg">₹{getWorkshopPrice()}/-</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -515,10 +562,10 @@ export default function Home() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !formData.workshopSpot}
               className="w-full p-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed neon-pulse hover:glitch-effect"
             >
-              {isSubmitting ? 'Processing Payment...' : 'Pay ₹750 & Register Now'}
+              {isSubmitting ? 'Processing Payment...' : formData.workshopSpot ? `Pay ₹${getWorkshopPrice()} & Register Now` : 'Select Workshop Spot First'}
             </button>
           </form>
         </div>

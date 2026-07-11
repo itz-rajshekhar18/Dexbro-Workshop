@@ -11,6 +11,7 @@ export interface RegistrationData {
   experience: string;
   interests: string[];
   message: string;
+  workshopSpot?: string;
 }
 
 // API Response types
